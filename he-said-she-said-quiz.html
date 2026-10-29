@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>He Said, She Said — Couples Quiz Night</title>
+<style>
+  :root{
+    --bg:#1a0f1e; --bg2:#241327; --card:#2e1933; --ink:#f5e9f2; --muted:#c9a9c4;
+    --gold:#e8b86d; --gold-soft:#f3d9a4; --rose:#e0657f; --good:#7fce9a; --bad:#ef8f8f;
+    --border:#4a2f4d;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{
+    font-family:Georgia,'Times New Roman',serif;
+    background:radial-gradient(ellipse at 50% -10%, #3a1f42 0%, var(--bg) 55%);
+    color:var(--ink); min-height:100vh; display:flex; align-items:center; justify-content:center;
+    padding:20px;
+  }
+  #app{width:100%;max-width:480px;animation:fade .4s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+  .screen{display:none}
+  .screen.active{display:block}
+  .card{background:linear-gradient(160deg,var(--card),var(--bg2));border:1px solid var(--border);
+    border-radius:20px;padding:28px 24px;box-shadow:0 20px 60px rgba(0,0,0,.45)}
+  .eyebrow{font-size:11px;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;text-align:center}
+  h1{font-size:30px;line-height:1.15;text-align:center;font-style:italic;margin-bottom:6px}
+  h2{font-size:20px;text-align:center;margin-bottom:16px;font-weight:normal;color:var(--gold-soft)}
+  .sub{text-align:center;color:var(--muted);font-size:14px;line-height:1.55;margin-bottom:22px}
+  .divider{text-align:center;color:var(--gold);margin:14px 0;font-size:18px;letter-spacing:.4em}
+  .btn{display:block;width:100%;padding:16px;border:none;border-radius:12px;font-family:inherit;
+    font-size:17px;cursor:pointer;transition:transform .12s ease, box-shadow .12s ease}
+  .btn:active{transform:scale(.97)}
+  .btn-gold{background:linear-gradient(135deg,var(--gold),#d19a4a);color:#2a160a;font-weight:bold;
+    box-shadow:0 6px 20px rgba(232,184,109,.25)}
+  .btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border);margin-top:12px;font-size:14px}
+  .disclaimer{font-size:11.5px;color:#8f7490;text-align:center;margin-top:18px;line-height:1.5;font-style:italic}
+  /* progress */
+  .progress{height:6px;background:#3d2540;border-radius:99px;overflow:hidden;margin-bottom:22px}
+  .progress > div{height:100%;background:linear-gradient(90deg,var(--rose),var(--gold));border-radius:99px;transition:width .35s ease}
+  .qnum{text-align:center;font-size:12px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-bottom:8px}
+  .scenario{font-size:13.5px;color:var(--muted);line-height:1.55;text-align:center;margin-bottom:14px;font-style:italic}
+  .question{font-size:19px;line-height:1.35;text-align:center;margin-bottom:24px}
+  .opt{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;background:#3a2140;
+    border:1px solid var(--border);color:var(--ink);padding:15px 16px;border-radius:12px;
+    font-family:inherit;font-size:15px;line-height:1.4;cursor:pointer;margin-bottom:10px;transition:all .15s ease}
+  .opt:hover{border-color:var(--gold);background:#44264b}
+  .opt:active{transform:scale(.98)}
+  .opt .letter{flex:0 0 26px;height:26px;border-radius:50%;background:var(--gold);color:#2a160a;
+    display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:13px;font-family:Arial,sans-serif}
+  /* results */
+  .score-ring{width:130px;height:130px;margin:0 auto 8px;position:relative}
+  .score-ring svg{transform:rotate(-90deg)}
+  .score-ring .num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .score-ring .num b{font-size:32px;color:var(--gold)}
+  .score-ring .num span{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+  .verdict{text-align:center;font-style:italic;color:var(--muted);font-size:14px;margin-bottom:24px}
+  .qrow{border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:12px;background:#341d3a}
+  .qrow .qtitle{font-size:13px;color:var(--muted);font-style:italic;margin-bottom:10px;line-height:1.4}
+  .bar-row{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+  .bar-row .lbl{flex:0 0 92px;font-size:12px;color:var(--muted)}
+  .bar-track{flex:1;height:16px;background:#241327;border-radius:99px;overflow:hidden}
+  .bar-fill{height:100%;border-radius:99px;width:0;transition:width .7s cubic-bezier(.2,.8,.2,1)}
+  .bar-fill.you{background:var(--rose)}
+  .bar-fill.ideal{background:var(--good)}
+  .bar-row .pct{flex:0 0 36px;font-size:12px;text-align:right;color:var(--ink)}
+  .why{font-size:12.5px;color:#d8b8d4;line-height:1.5;margin-top:8px;border-top:1px dashed var(--border);padding-top:8px}
+  .why b{color:var(--gold-soft)}
+  .match{display:inline-block;font-size:10px;letter-spacing:.15em;text-transform:uppercase;padding:3px 8px;border-radius:99px;margin-top:8px}
+  .match.ok{background:rgba(127,206,154,.15);color:var(--good)}
+  .match.no{background:rgba(239,143,143,.15);color:var(--bad)}
+  .discuss{margin-top:22px;background:rgba(232,184,109,.08);border:1px solid rgba(232,184,109,.3);
+    border-radius:12px;padding:16px}
+  .discuss h3{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+  .discuss li{font-size:13.5px;color:var(--ink);line-height:1.5;margin:0 0 8px 18px}
+  .hands{font-size:40px;text-align:center;margin-bottom:10px}
+  .final-score{display:flex;justify-content:space-around;margin:20px 0}
+  .final-score .side{text-align:center}
+  .final-score .side .big{font-size:30px;color:var(--gold)}
+  .final-score .side .who{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+  @media (max-width:380px){ h1{font-size:25px} .question{font-size:17px} }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- START -->
+  <div class="screen active" id="scr-start">
+    <div class="card">
+      <div class="eyebrow">Couples Evening · Interactive Game</div>
+      <h1>He Said,<br>She Said</h1>
+      <div class="divider">✦ ✦ ✦</div>
+      <p class="sub">Gents: you'll face <b style="color:var(--gold-soft)">7 scenarios</b> about what she <i>really</i> wants. Choose your instinct — then see the "playbook" answer, your score, and a graph of where you landed. Every gap is a conversation waiting to happen.<br><br>Then the phone changes hands…</p>
+      <button class="btn btn-gold" onclick="startRound('men')">Begin — Gents' Round</button>
+      <p class="disclaimer">Playbook answers are playful generalizations drawn from common relationship wisdom — discussion starters, not science. The real answers are sitting across from you.</p>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="screen" id="scr-quiz">
+    <div class="card">
+      <div class="progress"><div id="pbar" style="width:0%"></div></div>
+      <div class="qnum" id="qnum">Question 1 of 7</div>
+      <p class="scenario" id="scenario"></p>
+      <p class="question" id="question"></p>
+      <div id="options"></div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="screen" id="scr-results">
+    <div class="card">
+      <div class="eyebrow" id="res-eyebrow">Gents' Round · Results</div>
+      <div class="score-ring" id="score-ring"></div>
+      <p class="verdict" id="verdict"></p>
+      <div id="graph"></div>
+      <div class="discuss" id="discuss"></div>
+      <button class="btn btn-gold" id="next-btn" onclick="nextAfterResults()"></button>
+    </div>
+  </div>
+
+  <!-- FINAL -->
+  <div class="screen" id="scr-final">
+    <div class="card">
+      <div class="hands">🥂</div>
+      <div class="eyebrow">Game Complete</div>
+      <h2 style="font-style:italic">And the better mind-reader is…</h2>
+      <div class="final-score">
+        <div class="side"><div class="big" id="f-men">–</div><div class="who">The Gents</div></div>
+        <div class="side"><div class="big" id="f-women">–</div><div class="who">The Ladies</div></div>
+      </div>
+      <p class="sub" id="final-verdict" style="margin-bottom:20px"></p>
+      <div class="discuss" id="final-discuss"></div>
+      <button class="btn btn-ghost" onclick="location.reload()">Play Again</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const ROUNDS = {
+  men: {
+    title: "The Gents' Round",
+    introWho: "What does SHE really want?",
+    passTo: "Now… pass the phone to her 💃",
+    nextLabel: "Pass the Phone — Ladies' Round",
+    qs: [
+      { s:"She walks through the door after a brutal day at work, drops her bag, and lets out a long sigh.",
+        q:"What's the winning move?",
+        o:["Jump in with fixes — “Here's what you should do tomorrow…”",
+           "Listen and empathize — “That sounds exhausting. Tell me about it.”",
+           "Give her total space and say nothing at all."], a:1,
+        why:"In venting mode, most women want empathy <b>first</b>, solutions later. Fixing too fast can feel like her feelings got dismissed."},
+      { s:"It's your anniversary. She insists she “doesn't care about gifts.”",
+        q:"What actually lands best?",
+        o:["A lavish surprise dinner at the hardest restaurant to book in town",
+           "Money, so she can pick exactly what she wants",
+           "A small, specific thing that proves you listened — the book she mentioned once, her favourite pastry"], a:2,
+        why:"Thoughtfulness beats price tag. “You <i>remembered</i>” is the gift she'll tell her friends about."},
+      { s:"Mid-argument, she goes quiet and says: “I'm fine.” She is, demonstrably, not fine.",
+        q:"Best response?",
+        o:["“I can tell something's up — I want to understand. Take your time.”",
+           "“Okay, great!” and cheerfully move on",
+           "Match her silence and wait it out for three days"], a:0,
+        why:"Naming the tension gently beats both pretending nothing's wrong and sulking. It invites, never forces."},
+      { s:"She's telling you, in detail, about a drama between her and a friend.",
+        q:"What is she most likely looking for?",
+        o:["A logical verdict on who's right and who's wrong",
+           "To be distracted with a well-timed joke",
+           "You firmly on her side — “That's so unfair. How are you holding up?”"], a:2,
+        why:"She's sharing feelings, not filing a court case. Join her side of the story first; analysis can wait."},
+      { s:"An ordinary Tuesday. No occasion, no birthday, no anniversary.",
+        q:"What everyday thing makes her feel most loved?",
+        o:["A dozen roses delivered to her office, out of nowhere",
+           "You quietly handling the one chore she hates — before she asks",
+           "One spectacular, expensive gift once a year"], a:1,
+        why:"Consistent small acts say “I see you” daily. Grand gestures are punctuation — she's reading the sentence."},
+      { s:"She steps out of the bedroom in a new outfit and asks: “Does this look okay?”",
+        q:"What is the real question?",
+        o:["“Please assess this outfit technically — fabric, cut, colour theory.”",
+           "“Do I look good? Reassure me.”",
+           "“Should I go change into something completely different?”"], a:1,
+        why:"It's a bid for reassurance. A confident “You look incredible” is the answer she came fishing for."},
+      { s:"You realise, mid-conversation, that you forgot something she told you — something that mattered to her.",
+        q:"Best recovery?",
+        o:["“You never told me that.” (You did.)",
+           "Deflect with a joke and hope it blows over",
+           "Own it instantly: “You're right, that's on me. If it matters to you, it matters to me.”"], a:2,
+        why:"Accountability plus “you matter” repairs more than any excuse. Feeling prioritized is the underlying wound."}
+    ]
+  },
+  women: {
+    title: "The Ladies' Round",
+    introWho: "What does HE really want?",
+    passTo: "Game complete — time to talk! 🥂",
+    nextLabel: "See Final Scores",
+    qs: [
+      { s:"He comes home from a rough day, says “long day,” and goes quiet.",
+        q:"What's the winning move?",
+        o:["Follow him around asking “What are you thinking?” until he talks",
+           "Let him decompress for a bit, then check in warmly",
+           "Immediately schedule an emergency feelings summit"], a:1,
+        why:"Many men process internally first. Space, <i>then</i> connection — the quiet is usually regulation, not rejection."},
+      { s:"He nails a big project at work and mentions it casually over dinner.",
+        q:"Which response hits hardest?",
+        o:["“That's nice. Anyway, the sink is leaking…”",
+           "“I always knew you could do it — tell me everything.”",
+           "“My cousin did something similar once, let me tell you about him…”"], a:1,
+        why:"Celebrating his competence in his arena is rocket fuel. Your genuine enthusiasm matters more than the win itself."},
+      { s:"He's deep into the game / his hobby and seems totally “checked out.”",
+        q:"What's usually true?",
+        o:["He's recharging, not avoiding you — low-pressure company is welcome",
+           "He's secretly furious about something you did",
+           "He's waiting for you to compete for his attention"], a:0,
+        why:"Often it's decompression. Sitting beside him, no demands, no guilt — that <i>is</i> connection for him."},
+      { s:"No special occasion — just life.",
+        q:"What makes him feel most respected?",
+        o:["Publicly praising him to friends, family, and strangers daily",
+           "Trusting his judgment — not double-checking or micromanaging his tasks",
+           "Asking his opinion… and then doing it your way anyway"], a:1,
+        why:"For many men, respect = trust in his competence. Being trusted is being loved in his language."},
+      { s:"Friday night. Time to plan the weekend.",
+        q:"What's his actual dream scenario?",
+        o:["A fully packed itinerary, every hour optimized and booked",
+           "Zero plans whatsoever — pure chaos",
+           "A loose plan with real downtime and one or two fun anchors chosen together"], a:2,
+        why:"Structure without suffocation: shared input <i>plus</i> breathing room. He wants to co-pilot, not be scheduled."},
+      { s:"After a disagreement, he goes cold and silent.",
+        q:"What does he usually want?",
+        o:["For the issue to be buried and never spoken of again",
+           "Time to cool down so you can resolve it calmly later",
+           "For you to keep pushing until he finally explodes"], a:1,
+        why:"The silence is usually self-regulation, not punishment. A calm conversation later beats a heated one now."},
+      { s:"You want to make him feel loved today.",
+        q:"Which gesture lands the deepest?",
+        o:["A long, heartfelt letter about your feelings",
+           "Physical affection — a spontaneous hug, a hand on his chest, a kiss for no reason",
+           "An expensive gadget he's been eyeing"], a:1,
+        why:"For many men, touch is the primary dialect of love. Casual, unasked-for physical affection outranks objects and essays."}
+    ]
+  }
+};
+
+let round = 'men', qi = 0, picks = [], scores = {men:null, women:null};
+
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+function startRound(r){
+  round = r; qi = 0; picks = [];
+  show('scr-quiz'); renderQ();
+}
+function renderQ(){
+  const d = ROUNDS[round].qs[qi];
+  document.getElementById('pbar').style.width = (qi/7*100) + '%';
+  document.getElementById('qnum').textContent = ROUNDS[round].title + ' · Question ' + (qi+1) + ' of 7';
+  document.getElementById('scenario').textContent = d.s;
+  document.getElementById('question').textContent = d.q;
+  const box = document.getElementById('options'); box.innerHTML = '';
+  d.o.forEach((txt,i)=>{
+    const b = document.createElement('button');
+    b.className = 'opt';
+    b.innerHTML = '<span class="letter">'+'ABC'[i]+'</span><span>'+txt+'</span>';
+    b.onclick = ()=>pick(i);
+    box.appendChild(b);
+  });
+}
+function pick(i){
+  picks.push(i);
+  if(qi < 6){ qi++; renderQ(); }
+  else showResults();
+}
+function showResults(){
+  const d = ROUNDS[round];
+  const correct = picks.filter((p,i)=>p===d.qs[i].a).length;
+  scores[round] = correct;
+  document.getElementById('pbar').style.width = '100%';
+  document.getElementById('res-eyebrow').textContent = d.title + ' · Results';
+
+  // score ring
+  const pct = Math.round(correct/7*100), r=54, c=2*Math.PI*r;
+  document.getElementById('score-ring').innerHTML =
+    '<svg width="130" height="130"><circle cx="65" cy="65" r="'+r+'" fill="none" stroke="#3d2540" stroke-width="10"/>'+
+    '<circle cx="65" cy="65" r="'+r+'" fill="none" stroke="url(#g)" stroke-width="10" stroke-linecap="round" stroke-dasharray="'+c+'" stroke-dashoffset="'+(c*(1-pct/100))+'" style="transition:stroke-dashoffset 1s ease"/>'+
+    '<defs><linearGradient id="g"><stop offset="0%" stop-color="#e0657f"/><stop offset="100%" stop-color="#e8b86d"/></linearGradient></defs></svg>'+
+    '<div class="num"><b>'+correct+'/7</b><span>match</span></div>';
+
+  const verdicts = correct===7 ? "Certified mind-reader. Slightly suspicious. 👀"
+    : correct>=5 ? "Strong instincts — the playbook would hire you."
+    : correct>=3 ? "Half the playbook read. The other half is tonight's entertainment."
+    : "Bold choices. The discussion section is going to be very fun.";
+  document.getElementById('verdict').textContent = verdicts;
+
+  // graph
+  const g = document.getElementById('graph'); g.innerHTML = '';
+  d.qs.forEach((q,i)=>{
+    const youIdx = picks[i], match = youIdx === q.a;
+    const row = document.createElement('div'); row.className = 'qrow';
+    // distribution-style bars: you vs ideal (each question's two markers, weighted for visual interest)
+    const youW = 35 + (youIdx+1)*20, idW = 35 + (q.a+1)*20;
+    row.innerHTML =
+      '<div class="qtitle">Q'+(i+1)+'. '+q.s+'</div>'+
+      '<div class="bar-row"><span class="lbl">You picked</span><div class="bar-track"><div class="bar-fill you" data-w="'+youW+'"></div></div><span class="pct">'+'ABC'[youIdx]+'</span></div>'+
+      '<div class="bar-row"><span class="lbl">Playbook says</span><div class="bar-track"><div class="bar-fill ideal" data-w="'+idW+'"></div></div><span class="pct">'+'ABC'[q.a]+'</span></div>'+
+      '<span class="match '+(match?'ok':'no')+'">'+(match?'✓ Matched':'✗ Different')+'</span>'+
+      '<div class="why"><b>Why '+('ABC'[q.a])+':</b> '+q.why+'</div>';
+    g.appendChild(row);
+  });
+  setTimeout(()=>document.querySelectorAll('.bar-fill').forEach(b=>b.style.width=b.dataset.w+'%'),100);
+
+  // discussion prompts from mismatches
+  const mism = d.qs.map((q,i)=>({q,i})).filter(x=>picks[x.i]!==x.q.a);
+  const disc = document.getElementById('discuss');
+  if(mism.length){
+    disc.innerHTML = '<h3>🔥 Tonight\'s Discussion Points</h3><ul>' +
+      mism.map(x=>'<li><b>Q'+(x.i+1)+':</b> “'+x.q.s+'” — you chose '+('ABC'[picks[x.i]])+', the playbook says '+('ABC'[x.q.a])+'. <i>Which one is true in <u>your</u> relationship?</i></li>').join('') +
+      '</ul>';
+  } else {
+    disc.innerHTML = '<h3>🎯 Perfect Round</h3><ul><li>All 7 matched! Discuss: which one was the closest call?</li></ul>';
+  }
+
+  document.getElementById('next-btn').textContent = d.nextLabel;
+  show('scr-results');
+}
+function nextAfterResults(){
+  if(round === 'men'){
+    // handover screen
+    const btn = document.getElementById('next-btn');
+    document.getElementById('res-eyebrow').textContent = 'Phone Swap';
+    document.getElementById('score-ring').style.display='none';
+    document.getElementById('verdict').textContent = '';
+    document.getElementById('graph').innerHTML =
+      '<div style="text-align:center;padding:20px 0"><div style="font-size:52px;margin-bottom:10px">📱💃</div>'+
+      '<p class="sub">Gents, reveal your score to the table (bragging or shame — dealer\'s choice).<br><br>Now hand the phone to the ladies. Their turn to prove they know what <b style="color:var(--gold-soft)">he</b> really wants.</p></div>';
+    document.getElementById('discuss').innerHTML='';
+    btn.textContent = "Begin — Ladies' Round";
+    btn.onclick = ()=>{ document.getElementById('score-ring').style.display=''; btn.onclick = nextAfterResults; startRound('women'); };
+  } else {
+    showFinal();
+  }
+}
+function showFinal(){
+  document.getElementById('f-men').textContent = scores.men + '/7';
+  document.getElementById('f-women').textContent = scores.women + '/7';
+  let v;
+  if(scores.men > scores.women) v = "The gents read the playbook better tonight. Ladies — the rematch conversation starts now.";
+  else if(scores.women > scores.men) v = "The ladies take the crown. Gents — the graph above is your homework.";
+  else v = "Dead tie. Clearly you know each other… or you guessed equally well.";
+  document.getElementById('final-verdict').textContent = v;
+  document.getElementById('final-discuss').innerHTML =
+    '<h3>🥂 Closing Round — Everyone Answers</h3><ul>'+
+    '<li>Which “playbook answer” do you <i>disagree</i> with most? Why?</li>'+
+    '<li>Which question was the biggest mismatch between you two — and what would your real answer be?</li>'+
+    '<li>What’s one thing from tonight you’ll actually do differently this week?</li></ul>';
+  show('scr-final');
+}
+</script>
+</body>
+</html>
