@@ -4,13 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Between the Lines: Couples Event Edition</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 :root{--bg:#faf6f1;--card:#fff;--ink:#2b2420;--muted:#7a6e66;--accent:#b5523b;--men:#3d6b6b;--women:#b5523b;--line:#e8dfd6;--soft:#f3ebe3}
 *{box-sizing:border-box}
 html{font-size:clamp(16px,1.2vw + 8px,24px)}
 body{margin:0;font-family:Georgia,'Times New Roman',serif;background:var(--bg);color:var(--ink);line-height:1.5}
 main{max-width:1050px;margin:0 auto;padding:16px 22px 60px}
-.top{display:flex;justify-content:space-between;align-items:center;font-family:system-ui,sans-serif;font-size:.8rem;color:var(--muted);margin-bottom:8px}
+.top{display:flex;justify-content:space-between;align-items:center;font-family:system-ui,sans-serif;font-size:.8rem;color:var(--muted);margin-bottom:8px;gap:8px;flex-wrap:wrap}
 .top button{background:none;border:1px solid var(--line);color:var(--muted);padding:6px 12px;font-size:.8rem;margin-left:6px}
 h1{font-size:2.2rem;margin:.2em 0}
 h2{font-size:1.8rem;margin:.2em 0 .5em}
@@ -25,24 +26,13 @@ p{margin:.45em 0}
 .opt b{color:var(--accent);min-width:1.2em}
 .instr{font-family:system-ui,sans-serif;background:#e3efee;color:var(--men);border-radius:10px;padding:12px 16px;margin-top:14px;font-size:.95rem}
 label.field{display:block;font-family:system-ui,sans-serif;font-size:.85rem;margin:14px 0 4px;color:var(--muted)}
-input[type=number],select{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;font-size:1rem;background:#fff;font-family:inherit}
+select{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;font-size:1rem;background:#fff;font-family:inherit}
 .check{display:flex;gap:10px;align-items:center;font-family:system-ui,sans-serif;font-size:.9rem;margin:14px 0}
-button{font-family:system-ui,sans-serif;font-size:1rem;cursor:pointer;border-radius:12px;border:none;padding:14px 22px}
+button{font-family:system-ui,sans-serif;font-size:1rem;cursor:pointer;border-radius:12px;border:none;padding:14px 22px;color:var(--ink)}
 .primary{background:var(--accent);color:#fff;width:100%;margin-top:16px;font-weight:600}
 .secondary{background:transparent;color:var(--accent);border:1px solid var(--accent);width:100%;margin-top:10px}
 .progress{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-bottom:6px}
 .progress div{height:100%;background:var(--accent)}
-.groups{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-@media(max-width:700px){.groups{grid-template-columns:1fr}}
-.group h3{margin-top:0}
-.group.men h3{color:var(--men)}
-.group.women h3{color:var(--women)}
-.counter{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);font-family:system-ui,sans-serif}
-.counter .lt{font-weight:700;width:1.4em;font-size:1.2rem}
-.counter .tx{flex:1;font-size:.85rem;color:var(--muted)}
-.counter button{width:46px;height:46px;padding:0;font-size:1.4rem;background:var(--soft);color:var(--ink)}
-.counter .n{width:2em;text-align:center;font-size:1.4rem;font-weight:700}
-.total{font-family:system-ui,sans-serif;font-size:.85rem;color:var(--muted);margin-top:8px}
 .banner{font-size:1.3rem;font-weight:bold;padding:4px 0}
 .row{margin:16px 0}
 .row .ot{margin-bottom:6px}
@@ -60,18 +50,54 @@ button{font-family:system-ui,sans-serif;font-size:1rem;cursor:pointer;border-rad
 .timer{display:flex;align-items:center;gap:16px;font-family:system-ui,sans-serif;margin-top:16px}
 .timer .clock{font-size:2rem;font-weight:700;min-width:4em}
 .timer .done{color:var(--accent)}
-.timer button{background:var(--soft);color:var(--ink)}
+.timer button{background:var(--soft)}
 .stat{display:flex;justify-content:space-between;gap:12px;font-family:system-ui,sans-serif;padding:10px 0;border-bottom:1px solid var(--line)}
+.stat.men span{color:var(--men)}
+.stat.women span{color:var(--women)}
 table{width:100%;border-collapse:collapse;font-family:system-ui,sans-serif;font-size:.85rem}
 th,td{text-align:left;padding:10px 6px;border-bottom:1px solid var(--line);vertical-align:top}
 th{color:var(--muted);font-weight:600}
 ul.talk{padding-left:18px}
 ul.talk li{margin:12px 0}
+.center{text-align:center}
+.qr{display:inline-block;padding:14px;background:#fff;border-radius:12px;border:1px solid var(--line)}
+.qr img,.qr canvas{display:block}
+.url{font-family:system-ui,sans-serif;font-size:1.1rem;font-weight:600;word-break:break-all;margin-top:10px}
+.joined{font-family:system-ui,sans-serif;font-size:1.4rem;font-weight:700;margin-top:12px}
+.overlay{position:fixed;inset:0;background:rgba(43,36,32,.75);display:flex;align-items:center;justify-content:center;z-index:10;padding:16px}
+/* phone (player) styles */
+.phone main{max-width:560px}
+.phone html{font-size:17px}
+.gbtn{display:block;width:100%;font-size:1.3rem;font-weight:700;padding:22px;margin:14px 0;color:#fff}
+.gbtn.men{background:var(--men)}
+.gbtn.women{background:var(--women)}
+.choice{display:flex;gap:14px;align-items:flex-start;width:100%;text-align:left;background:var(--soft);border:2px solid transparent;font-size:1.05rem;font-family:Georgia,serif;margin:10px 0;padding:16px}
+.choice b{color:var(--accent);font-family:system-ui,sans-serif}
+.choice.sel{border-color:var(--accent);background:#fbe9e3}
+.status{font-family:system-ui,sans-serif;font-size:.9rem;color:var(--men);margin-top:10px;min-height:1.5em}
+.foot{font-family:system-ui,sans-serif;font-size:.8rem;color:var(--muted);text-align:center;margin-top:24px}
+.foot button{background:none;color:var(--accent);padding:4px 6px;font-size:.8rem;text-decoration:underline}
+.wait{font-size:1.25rem;text-align:center;padding:20px 0}
 </style>
 </head>
 <body>
 <main id="app"></main>
-<script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, set, get, remove, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+// ============================================================
+//  PASTE YOUR FIREBASE CONFIG HERE (replace this whole object)
+// ============================================================
+const FIREBASE_CONFIG = {
+  apiKey: "PASTE_HERE",
+  authDomain: "PASTE_HERE",
+  databaseURL: "PASTE_HERE",
+  projectId: "PASTE_HERE",
+  appId: "PASTE_HERE"
+};
+// ============================================================
+
 const L = ["A", "B", "C"];
 
 const SCENARIOS = [
@@ -200,41 +226,41 @@ const SCENARIOS = [
     couplePrompt: "What does a real apology from me sound like to you?" }
 ];
 
-const KEY = "btl-event-v1";
+// ---------- shared helpers ----------
 const app = document.getElementById("app");
-let S = null, timerId = null, timerLeft = 0;
+const IS_HOST = new URLSearchParams(location.search).has("host");
+const PLAYER_URL = location.origin + location.pathname;
+const CONFIGURED = !String(FIREBASE_CONFIG.databaseURL).includes("PASTE");
 
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const sum = a => a.reduce((x, y) => x + y, 0);
 const pct = (n, t) => (t ? Math.round((n / t) * 100) : 0);
+const blank = () => ({ men: [0, 0, 0], women: [0, 0, 0] });
 function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
-function save() { try { if (S) localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
-function load() { try { return JSON.parse(localStorage.getItem(KEY)); } catch (e) { return null; } }
-function clearSave() { try { localStorage.removeItem(KEY); } catch (e) {} }
+function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
 function render(html, keepScroll) { app.innerHTML = html; if (!keepScroll) window.scrollTo(0, 0); }
-
-const cur = () => S.deck[S.idx];
-const scn = () => SCENARIOS[cur().sc];
+function tops(arr) { const m = Math.max(...arr); return m === 0 ? [] : arr.map((v, i) => (v === m ? i : -1)).filter(i => i >= 0); }
+const fmt = idx => (idx.length ? idx.map(i => L[i]).join(" / ") : "–");
+function normT(t) { t = t || {}; const fix = a => [0, 1, 2].map(i => (a && a[i]) || 0); return { men: fix(t.men), women: fix(t.women) }; }
+const tallyOf = (st, k) => normT(st.tallies && st.tallies[k]);
 
 function roles(ask) {
   if (ask === "both") return { badge: "Everyone answers", men: "Men", women: "Women",
-    instr: "Men and women: each choose your own honest answer." };
+    instr: "Men and women: each choose your own honest answer on your phone." };
   if (ask === "men") return { badge: "Men answer · Women predict", men: "Men (answers)", women: "Women (predicting the men)",
     instr: "Men: choose your honest answer. Women: predict what most of the men will choose." };
   return { badge: "Women answer · Men predict", men: "Men (predicting the women)", women: "Women (answers)",
     instr: "Women: choose your honest answer. Men: predict what most of the women will choose." };
 }
 
-function tops(arr) { const m = Math.max(...arr); return m === 0 ? [] : arr.map((v, i) => (v === m ? i : -1)).filter(i => i >= 0); }
-const fmt = idx => (idx.length ? idx.map(i => L[i]).join(" / ") : "–");
-
 function headline(it, t) {
   const m = tops(t.men), w = tops(t.women);
-  if (!m.length && !w.length) return "No answers were counted for this question.";
+  if (!m.length && !w.length) return "No answers came in for this question.";
   if (!m.length || !w.length) {
     const who = m.length ? "men" : "women", other = m.length ? "women" : "men";
     const verb = it.ask === "both" || it.ask === who ? "chose" : "predicted";
-    return `Only the ${who}’s cards were counted. Most ${who} ${verb} ${fmt(m.length ? m : w)}. What would the ${other} have said?`;
+    return `Only the ${who} answered. Most ${who} ${verb} ${fmt(m.length ? m : w)}. What would the ${other} have said?`;
   }
   const overlap = m.some(i => w.includes(i));
   if (it.ask === "both") {
@@ -254,220 +280,386 @@ function gap(t) {
   return Math.round((t.men.reduce((s, v, i) => s + Math.abs(v / tm - t.women[i] / tw), 0) / 2) * 100);
 }
 
-function topBar(showHome) {
-  return `<div class="top"><span>Between the Lines · Couples Event</span><span>${showHome ? '<button data-act="home">Home</button>' : ""}<button data-act="fs">⛶ Full screen</button></span></div>`;
-}
-function progress() {
-  return `<div class="progress"><div style="width:${Math.round((S.idx / S.deck.length) * 100)}%"></div></div><div class="sub">Question ${S.idx + 1} of ${S.deck.length}</div>`;
-}
-
-function show(keepScroll) {
-  stopTimer();
-  save();
-  if (!S) return viewSetup();
-  ({ question: viewQuestion, tally: viewTally, reveal: viewReveal, end: viewEnd })[S.phase](keepScroll);
-}
-
-function viewSetup() {
-  stopTimer();
-  const saved = load(), canResume = saved && saved.phase !== "end";
-  render(`${topBar(false)}
-    <h1>Between the Lines</h1>
-    <p class="sub">Couples Event Edition: a hosted conversation game for a room of couples</p>
-    ${canResume ? `<div class="card"><p>An event is in progress (question ${saved.idx + 1} of ${saved.deck.length}).</p><button class="primary" data-act="resume">Resume event</button></div>` : ""}
-    <div class="card">
-      <h3>Set up the event</h3>
-      <label class="field" for="cp">Number of couples</label>
-      <input id="cp" type="number" min="1" max="200" value="10">
-      <label class="field" for="mode">Format</label>
-      <select id="mode">
-        <option value="alt" selected>Alternate: men answer and women predict, then swap</option>
-        <option value="both">Everyone answers every question</option>
-      </select>
-      <label class="field" for="len">Number of questions</label>
-      <select id="len">
-        <option value="7">7 questions (shorter event)</option>
-        <option value="10">10 questions</option>
-        <option value="14" selected>14 questions (full evening)</option>
-      </select>
-      <label class="field" for="tm">Discussion timer</label>
-      <select id="tm">
-        <option value="0">Off</option>
-        <option value="3">3 minutes</option>
-        <option value="5" selected>5 minutes</option>
-        <option value="8">8 minutes</option>
-        <option value="10">10 minutes</option>
-      </select>
-      <label class="check"><input type="checkbox" id="shuf"> Shuffle question order</label>
-      <button class="primary" data-act="start">${canResume ? "Start a new event instead" : "Start the event"}</button>
-    </div>
-    <div class="card">
-      <h3>Host notes</h3>
-      <p>Run this on a laptop connected to a projector or TV. Give everyone a way to show A, B or C at the same moment: printed cards, or holding up 1, 2 or 3 fingers.</p>
-      <p>For each question, read the scenario aloud and give everyone a few seconds to decide silently. Then say “3, 2, 1, show”, count the cards and enter the numbers. Reveal the results and open the discussion.</p>
-      <p>Showing answers at the same time stops people copying each other, which keeps the results honest.</p>
-    </div>`);
-}
-
-function startEvent() {
-  const saved = load();
-  if (saved && saved.phase !== "end" && !confirm("Start a new event? The one in progress will be replaced.")) return;
-  const couples = Math.max(1, parseInt(document.getElementById("cp").value, 10) || 10);
-  const mode = document.getElementById("mode").value;
-  const n = +document.getElementById("len").value;
-  const timerMin = +document.getElementById("tm").value;
-  let order = SCENARIOS.map((_, i) => i);
-  if (document.getElementById("shuf").checked) order = shuffle(order);
-  order = order.slice(0, n);
-  S = {
-    couples, mode, timerMin, idx: 0, phase: "question",
-    deck: order.map((sc, k) => ({ sc, ask: mode === "both" ? "both" : (k % 2 === 0 ? "men" : "women") })),
-    tallies: order.map(() => ({ men: [0, 0, 0], women: [0, 0, 0] }))
-  };
-  show();
-}
-
-function viewQuestion() {
-  const it = cur(), sc = scn(), r = roles(it.ask);
-  render(`${topBar(true)}${progress()}
-    <div class="card">
-      <span class="badge">${r.badge}</span>
-      <h2>${esc(sc.title)}</h2>
-      ${sc.setup.map(l => `<p class="setup-line">${esc(l)}</p>`).join("")}
-      <p class="question">${esc(sc.question)}</p>
-      ${sc.options.map((o, i) => `<div class="opt"><b>${L[i]}</b><span>${esc(o)}</span></div>`).join("")}
-      <div class="instr">${r.instr} When everyone’s ready: 3, 2, 1, show your cards.</div>
-    </div>
-    <button class="primary" data-act="tally">Count the answers →</button>
-    ${it.ask !== "both" ? `<button class="secondary" data-act="swap">Swap: ${it.ask === "men" ? "women answer, men predict" : "men answer, women predict"}</button>` : ""}`);
-}
-
-function groupPanel(g, label, counts) {
-  return `<div class="card group ${g}"><h3>${label}</h3>
-    ${scn().options.map((o, i) => `<div class="counter"><span class="lt">${L[i]}</span><span class="tx">${esc(o)}</span>
-      <button data-act="dec" data-g="${g}" data-i="${i}" aria-label="Remove one">−</button>
-      <span class="n">${counts[i]}</span>
-      <button data-act="inc" data-g="${g}" data-i="${i}" aria-label="Add one">+</button></div>`).join("")}
-    <div class="total">Counted ${sum(counts)} of ${S.couples}</div></div>`;
-}
-
-function viewTally(keepScroll) {
-  const it = cur(), sc = scn(), r = roles(it.ask), t = S.tallies[S.idx];
-  render(`${topBar(true)}${progress()}
-    <h2>${esc(sc.title)}: count the cards</h2>
-    <p class="sub">${r.instr}</p>
-    <div class="groups">${groupPanel("men", r.men, t.men)}${groupPanel("women", r.women, t.women)}</div>
-    <button class="primary" data-act="reveal">Reveal the results</button>
-    <button class="secondary" data-act="back">← Back to the question</button>`, keepScroll);
-}
-
-function chart(it, t) {
-  const r = roles(it.ask), tm = sum(t.men), tw = sum(t.women);
-  return scn().options.map((o, i) => `<div class="row"><div class="ot"><b>${L[i]}</b> ${esc(o)}</div>
-    <div class="bar men"><span class="who">${r.men}</span><div class="track"><div class="fill" style="width:${pct(t.men[i], tm)}%"></div></div><span class="pct">${t.men[i]} · ${pct(t.men[i], tm)}%</span></div>
-    <div class="bar women"><span class="who">${r.women}</span><div class="track"><div class="fill" style="width:${pct(t.women[i], tw)}%"></div></div><span class="pct">${t.women[i]} · ${pct(t.women[i], tw)}%</span></div></div>`).join("");
-}
-
-function viewReveal() {
-  const it = cur(), sc = scn(), t = S.tallies[S.idx], last = S.idx === S.deck.length - 1;
-  render(`${topBar(true)}${progress()}
-    <div class="card">
-      <span class="badge">${roles(it.ask).badge}</span>
-      <h2>${esc(sc.title)}</h2>
-      <p class="banner">${esc(headline(it, t))}</p>
-      ${chart(it, t)}
-    </div>
-    <div class="card"><h3>Counsellor’s observation</h3><div class="insight">${sc.insight.map(x => `<p>${esc(x)}</p>`).join("")}</div></div>
-    <div class="card">
-      <h3>Room discussion</h3><div class="prompt">${esc(sc.roomPrompt)}</div>
-      <h3>Then turn to your partner</h3><div class="prompt">“${esc(sc.couplePrompt)}”</div>
-      ${S.timerMin ? `<div class="timer"><span class="clock" id="clock">${fmtTime(S.timerMin * 60)}</span><button data-act="timer" id="tbtn">Start discussion timer</button></div>` : ""}
-    </div>
-    <button class="primary" data-act="next">${last ? "Finish and see the summary" : "Next question →"}</button>`);
-  timerLeft = S.timerMin * 60;
-}
-
-function fmtTime(s) { return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; }
-function stopTimer() { if (timerId) { clearInterval(timerId); timerId = null; } }
-function toggleTimer() {
-  const b = document.getElementById("tbtn"), c = document.getElementById("clock");
-  if (timerId) { stopTimer(); b.textContent = "Resume"; return; }
-  if (timerLeft <= 0) { timerLeft = S.timerMin * 60; c.classList.remove("done"); c.textContent = fmtTime(timerLeft); }
-  b.textContent = "Pause";
-  timerId = setInterval(() => {
-    timerLeft--;
-    c.textContent = fmtTime(Math.max(timerLeft, 0));
-    if (timerLeft <= 0) { stopTimer(); c.textContent = "Time’s up"; c.classList.add("done"); b.textContent = "Restart"; }
-  }, 1000);
-}
-
-function viewEnd() {
-  const rows = S.deck.map((it, k) => {
-    const sc = SCENARIOS[it.sc], t = S.tallies[k], m = tops(t.men), w = tops(t.women), ov = m.some(i => w.includes(i));
+function summaryRows(st) {
+  return st.deck.map((it, k) => {
+    const sc = SCENARIOS[it.sc], t = tallyOf(st, k), m = tops(t.men), w = tops(t.women), ov = m.some(i => w.includes(i));
     let res;
     if (!m.length || !w.length) res = "Not counted";
     else if (it.ask === "both") res = ov ? "Same reading" : "Different readings";
     else res = ov ? "Predicted correctly" : "Predicted differently";
     return { sc, it, m, w, res, gap: gap(t) };
   });
-  const counted = rows.filter(r => r.res !== "Not counted");
-  const womenPred = counted.filter(r => r.it.ask === "men");
-  const menPred = counted.filter(r => r.it.ask === "women");
-  const ok = arr => arr.filter(r => r.res === "Predicted correctly").length;
-  const biggest = rows.filter(r => r.gap > 0).sort((a, b) => b.gap - a.gap).slice(0, 3);
-  render(`${topBar(false)}
-    <h1>The evening in summary</h1>
-    ${womenPred.length || menPred.length ? `<div class="card"><h3>Reading each other</h3>
-      ${womenPred.length ? `<div class="stat"><span>Women correctly predicted the men</span><strong>${ok(womenPred)} of ${womenPred.length}</strong></div>` : ""}
-      ${menPred.length ? `<div class="stat"><span>Men correctly predicted the women</span><strong>${ok(menPred)} of ${menPred.length}</strong></div>` : ""}
-      <p class="sub" style="margin-top:10px">A “correct” prediction means the predicting group’s most common answer matched the answering group’s most common answer.</p></div>` : ""}
-    <div class="card"><h3>Every question</h3>
-      <table><tr><th>Question</th><th>Format</th><th>Men</th><th>Women</th><th>Result</th></tr>
-      ${rows.map(r => `<tr><td>${esc(r.sc.title)}</td><td>${roles(r.it.ask).badge}</td><td>${fmt(r.m)}</td><td>${fmt(r.w)}</td><td>${r.res}</td></tr>`).join("")}
-      </table></div>
-    ${biggest.length ? `<div class="card"><h3>Biggest differences: worth continuing at home</h3><ul class="talk">
-      ${biggest.map(r => `<li><strong>${esc(r.sc.title)}</strong> (${r.gap}% apart)<br><em>“${esc(r.sc.couplePrompt)}”</em></li>`).join("")}</ul></div>` : ""}
-    <button class="primary" data-act="new">Start a new event</button>`);
+}
+const biggestOf = rows => rows.filter(r => r.gap > 0).sort((a, b) => b.gap - a.gap).slice(0, 3);
+
+function drawQR(id, size) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (window.QRCode) new window.QRCode(el, { text: PLAYER_URL, width: size, height: size, colorDark: "#2b2420", colorLight: "#ffffff" });
+  else el.textContent = "QR code couldn’t load. Share the link below instead.";
 }
 
-app.addEventListener("click", e => {
-  const b = e.target.closest("[data-act]");
-  if (!b) return;
-  const a = b.dataset.act;
-  switch (a) {
-    case "fs":
-      if (document.fullscreenElement) document.exitFullscreen();
-      else if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
-      break;
-    case "home": viewSetup(); break;
-    case "resume": S = load(); show(); break;
-    case "start": startEvent(); break;
-    case "new": clearSave(); S = null; viewSetup(); break;
-    case "tally": S.phase = "tally"; show(); break;
-    case "back": S.phase = "question"; show(); break;
-    case "swap": {
-      const it = cur();
-      it.ask = it.ask === "men" ? "women" : "men";
-      S.tallies[S.idx] = { men: [0, 0, 0], women: [0, 0, 0] };
-      show(); break;
-    }
-    case "inc":
-    case "dec": {
-      const t = S.tallies[S.idx][b.dataset.g], i = +b.dataset.i;
-      if (a === "inc" && sum(t) < S.couples) t[i]++;
-      if (a === "dec" && t[i] > 0) t[i]--;
-      show(true); break;
-    }
-    case "reveal": S.phase = "reveal"; show(); break;
-    case "next":
-      if (S.idx < S.deck.length - 1) { S.idx++; S.phase = "question"; }
-      else S.phase = "end";
-      show(); break;
-    case "timer": toggleTimer(); break;
-  }
-});
+// ---------- start ----------
+if (!CONFIGURED) {
+  render(`<h1>Between the Lines</h1><div class="card"><h3>Setup needed</h3>
+    <p>This game needs a free Firebase database so phones can send their answers to the host screen.</p>
+    <p>Open <code>index.html</code>, find <strong>PASTE YOUR FIREBASE CONFIG HERE</strong> near the top of the script, and replace it with your Firebase settings.</p></div>`);
+} else {
+  const db = getDatabase(initializeApp(FIREBASE_CONFIG));
+  const R = p => ref(db, "event" + (p ? "/" + p : ""));
+  if (IS_HOST) startHost(R); else startPlayer(R);
+}
 
-viewSetup();
+// ================================================================
+//  HOST (laptop on the projector): open the site with ?host at the end
+// ================================================================
+function startHost(R) {
+  document.title = "Host · Between the Lines";
+  let S = null, players = {}, votes = {}, unsubVotes = null, voteIdx = -1, lastSaved = null;
+  let timerId = null, timerLeft = 0;
+
+  const cur = () => S.deck[S.idx];
+  const scn = () => SCENARIOS[cur().sc];
+  const save = () => set(R("state"), S);
+
+  function joined() { const c = { men: 0, women: 0 }; Object.values(players).forEach(g => { if (g in c) c[g]++; }); return c; }
+  function liveTally() { const t = blank(); Object.values(votes).forEach(v => { if (v && t[v.g] && v.c >= 0 && v.c < 3) t[v.g][v.c]++; }); return t; }
+
+  onValue(R("players"), s => { players = s.val() || {}; updateLive(); });
+
+  function listenVotes(idx) {
+    if (voteIdx === idx && unsubVotes) return;
+    if (unsubVotes) unsubVotes();
+    votes = {}; voteIdx = idx;
+    unsubVotes = onValue(R("votes/" + idx), s => { votes = s.val() || {}; updateLive(); });
+  }
+
+  function joinedHTML() { const j = joined(); return `${j.men} ${j.men === 1 ? "man" : "men"} · ${j.women} ${j.women === 1 ? "woman" : "women"} joined`; }
+  function liveHTML() {
+    const j = joined(), t = liveTally(), r = roles(cur().ask);
+    return `<h3>Answers coming in</h3>
+      <div class="stat men"><span>${r.men}</span><strong>${sum(t.men)} of ${j.men}</strong></div>
+      <div class="stat women"><span>${r.women}</span><strong>${sum(t.women)} of ${j.women}</strong></div>`;
+  }
+  function updateLive() {
+    const jl = document.getElementById("joined"); if (jl) jl.textContent = joinedHTML();
+    const lv = document.getElementById("live"); if (lv && S && S.phase === "question") lv.innerHTML = liveHTML();
+  }
+
+  function topBar(showHome) {
+    return `<div class="top"><span>Between the Lines · Host screen</span><span>${S && S.phase !== "end" && showHome ? '<button data-act="qr">Join QR</button>' : ""}${showHome ? '<button data-act="home">Home</button>' : ""}<button data-act="fs">⛶ Full screen</button></span></div>`;
+  }
+  function progress() {
+    return `<div class="progress"><div style="width:${Math.round((S.idx / S.deck.length) * 100)}%"></div></div><div class="sub">Question ${S.idx + 1} of ${S.deck.length}</div>`;
+  }
+
+  function show() {
+    stopTimer();
+    save();
+    if (S.phase === "question") listenVotes(S.idx);
+    ({ lobby: viewLobby, question: viewQuestion, reveal: viewReveal, end: viewEnd })[S.phase]();
+  }
+
+  async function goHome() {
+    stopTimer();
+    render(`<p class="sub">Loading…</p>`);
+    let saved = null;
+    try { saved = (await get(R("state"))).val(); } catch (e) {}
+    lastSaved = saved;
+    viewSetup(saved);
+  }
+
+  function viewSetup(saved) {
+    const canResume = saved && saved.phase !== "end";
+    render(`${topBar(false)}
+      <h1>Between the Lines</h1>
+      <p class="sub">Couples Event Edition: everyone plays on their own phone</p>
+      ${canResume ? `<div class="card"><p>An event is in progress (${saved.phase === "lobby" ? "waiting for players" : `question ${saved.idx + 1} of ${saved.deck.length}`}).</p><button class="primary" data-act="resume">Resume event</button></div>` : ""}
+      <div class="card">
+        <h3>Set up the event</h3>
+        <label class="field" for="mode">Format</label>
+        <select id="mode">
+          <option value="alt" selected>Alternate: men answer and women predict, then swap</option>
+          <option value="both">Everyone answers every question</option>
+        </select>
+        <label class="field" for="len">Number of questions</label>
+        <select id="len">
+          <option value="7">7 questions (shorter event)</option>
+          <option value="10">10 questions</option>
+          <option value="14" selected>14 questions (full evening)</option>
+        </select>
+        <label class="field" for="tm">Discussion timer</label>
+        <select id="tm">
+          <option value="0">Off</option>
+          <option value="3">3 minutes</option>
+          <option value="5" selected>5 minutes</option>
+          <option value="8">8 minutes</option>
+          <option value="10">10 minutes</option>
+        </select>
+        <label class="check"><input type="checkbox" id="shuf"> Shuffle question order</label>
+        <button class="primary" data-act="start">${canResume ? "Start a new event instead" : "Open the event"}</button>
+      </div>
+      <div class="card">
+        <h3>How it works</h3>
+        <p>Keep this screen on the projector. Guests scan the QR code, choose man or woman, and answer each question on their phone.</p>
+        <p>You’ll see answers arrive live. Press “Reveal” when most people have answered, and the room’s results appear here.</p>
+      </div>`);
+  }
+
+  function startEvent() {
+    if (lastSaved && lastSaved.phase !== "end" && !confirm("Start a new event? The one in progress, and everyone who joined it, will be cleared.")) return;
+    const mode = document.getElementById("mode").value;
+    const n = +document.getElementById("len").value;
+    const timerMin = +document.getElementById("tm").value;
+    let order = SCENARIOS.map((_, i) => i);
+    if (document.getElementById("shuf").checked) order = shuffle(order);
+    order = order.slice(0, n);
+    S = {
+      eventId: Date.now().toString(36), mode, timerMin, idx: 0, phase: "lobby",
+      deck: order.map((sc, k) => ({ sc, ask: mode === "both" ? "both" : (k % 2 === 0 ? "men" : "women") })),
+      tallies: {}
+    };
+    if (unsubVotes) { unsubVotes(); unsubVotes = null; voteIdx = -1; }
+    players = {};
+    set(R(), { state: S }).then(() => show());
+  }
+
+  function viewLobby() {
+    render(`${topBar(true)}
+      <div class="card center">
+        <h1>Scan to join</h1>
+        <p class="sub">Point your phone camera at the code, then choose man or woman.</p>
+        <div class="qr" id="qr" style="margin-top:14px"></div>
+        <div class="url">${esc(PLAYER_URL)}</div>
+        <div class="joined" id="joined">${joinedHTML()}</div>
+      </div>
+      <button class="primary" data-act="begin">Everyone’s in: start question 1 →</button>`);
+    drawQR("qr", 300);
+  }
+
+  function viewQuestion() {
+    const it = cur(), sc = scn(), r = roles(it.ask);
+    render(`${topBar(true)}${progress()}
+      <div class="card">
+        <span class="badge">${r.badge}</span>
+        <h2>${esc(sc.title)}</h2>
+        ${sc.setup.map(l => `<p class="setup-line">${esc(l)}</p>`).join("")}
+        <p class="question">${esc(sc.question)}</p>
+        ${sc.options.map((o, i) => `<div class="opt"><b>${L[i]}</b><span>${esc(o)}</span></div>`).join("")}
+        <div class="instr">${r.instr}</div>
+      </div>
+      <div class="card" id="live">${liveHTML()}</div>
+      <button class="primary" data-act="reveal">Close answers and reveal the results</button>
+      ${it.ask !== "both" ? `<button class="secondary" data-act="swap">Swap: ${it.ask === "men" ? "women answer, men predict" : "men answer, women predict"} (clears answers so far)</button>` : ""}`);
+  }
+
+  function chart(it, t) {
+    const r = roles(it.ask), tm = sum(t.men), tw = sum(t.women);
+    return scn().options.map((o, i) => `<div class="row"><div class="ot"><b>${L[i]}</b> ${esc(o)}</div>
+      <div class="bar men"><span class="who">${r.men}</span><div class="track"><div class="fill" style="width:${pct(t.men[i], tm)}%"></div></div><span class="pct">${t.men[i]} · ${pct(t.men[i], tm)}%</span></div>
+      <div class="bar women"><span class="who">${r.women}</span><div class="track"><div class="fill" style="width:${pct(t.women[i], tw)}%"></div></div><span class="pct">${t.women[i]} · ${pct(t.women[i], tw)}%</span></div></div>`).join("");
+  }
+
+  function viewReveal() {
+    const it = cur(), sc = scn(), t = tallyOf(S, S.idx), last = S.idx === S.deck.length - 1;
+    render(`${topBar(true)}${progress()}
+      <div class="card">
+        <span class="badge">${roles(it.ask).badge}</span>
+        <h2>${esc(sc.title)}</h2>
+        <p class="banner">${esc(headline(it, t))}</p>
+        ${chart(it, t)}
+      </div>
+      <div class="card"><h3>Counsellor’s observation</h3><div class="insight">${sc.insight.map(x => `<p>${esc(x)}</p>`).join("")}</div></div>
+      <div class="card">
+        <h3>Room discussion</h3><div class="prompt">${esc(sc.roomPrompt)}</div>
+        <h3>Then turn to your partner</h3><div class="prompt">“${esc(sc.couplePrompt)}”</div>
+        ${S.timerMin ? `<div class="timer"><span class="clock" id="clock">${fmtTime(S.timerMin * 60)}</span><button data-act="timer" id="tbtn">Start discussion timer</button></div>` : ""}
+      </div>
+      <button class="primary" data-act="next">${last ? "Finish and see the summary" : "Next question →"}</button>
+      <button class="secondary" data-act="reopen">← Reopen answers for this question</button>`);
+    timerLeft = S.timerMin * 60;
+  }
+
+  function fmtTime(s) { return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; }
+  function stopTimer() { if (timerId) { clearInterval(timerId); timerId = null; } }
+  function toggleTimer() {
+    const b = document.getElementById("tbtn"), c = document.getElementById("clock");
+    if (timerId) { stopTimer(); b.textContent = "Resume"; return; }
+    if (timerLeft <= 0) { timerLeft = S.timerMin * 60; c.classList.remove("done"); c.textContent = fmtTime(timerLeft); }
+    b.textContent = "Pause";
+    timerId = setInterval(() => {
+      timerLeft--;
+      c.textContent = fmtTime(Math.max(timerLeft, 0));
+      if (timerLeft <= 0) { stopTimer(); c.textContent = "Time’s up"; c.classList.add("done"); b.textContent = "Restart"; }
+    }, 1000);
+  }
+
+  function viewEnd() {
+    const rows = summaryRows(S);
+    const counted = rows.filter(r => r.res !== "Not counted");
+    const womenPred = counted.filter(r => r.it.ask === "men");
+    const menPred = counted.filter(r => r.it.ask === "women");
+    const ok = arr => arr.filter(r => r.res === "Predicted correctly").length;
+    const biggest = biggestOf(rows);
+    render(`${topBar(false)}
+      <h1>The evening in summary</h1>
+      ${womenPred.length || menPred.length ? `<div class="card"><h3>Reading each other</h3>
+        ${womenPred.length ? `<div class="stat"><span>Women correctly predicted the men</span><strong>${ok(womenPred)} of ${womenPred.length}</strong></div>` : ""}
+        ${menPred.length ? `<div class="stat"><span>Men correctly predicted the women</span><strong>${ok(menPred)} of ${menPred.length}</strong></div>` : ""}
+        <p class="sub" style="margin-top:10px">A “correct” prediction means the predicting group’s most common answer matched the answering group’s most common answer.</p></div>` : ""}
+      <div class="card"><h3>Every question</h3>
+        <table><tr><th>Question</th><th>Format</th><th>Men</th><th>Women</th><th>Result</th></tr>
+        ${rows.map(r => `<tr><td>${esc(r.sc.title)}</td><td>${roles(r.it.ask).badge}</td><td>${fmt(r.m)}</td><td>${fmt(r.w)}</td><td>${r.res}</td></tr>`).join("")}
+        </table></div>
+      ${biggest.length ? `<div class="card"><h3>Biggest differences: worth continuing at home</h3><ul class="talk">
+        ${biggest.map(r => `<li><strong>${esc(r.sc.title)}</strong> (${r.gap}% apart)<br><em>“${esc(r.sc.couplePrompt)}”</em></li>`).join("")}</ul>
+        <p class="sub">These questions are also on everyone’s phone now.</p></div>` : ""}
+      <button class="primary" data-act="home">Back to the start</button>`);
+  }
+
+  function showQROverlay() {
+    const o = document.createElement("div");
+    o.className = "overlay";
+    o.innerHTML = `<div class="card center"><h2>Scan to join</h2><div class="qr" id="qr2"></div><div class="url">${esc(PLAYER_URL)}</div><p class="sub">Tap anywhere to close</p></div>`;
+    o.addEventListener("click", () => o.remove());
+    document.body.appendChild(o);
+    drawQR("qr2", 300);
+  }
+
+  app.addEventListener("click", e => {
+    const b = e.target.closest("[data-act]");
+    if (!b) return;
+    switch (b.dataset.act) {
+      case "fs":
+        if (document.fullscreenElement) document.exitFullscreen();
+        else if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
+        break;
+      case "qr": showQROverlay(); break;
+      case "home": goHome(); break;
+      case "resume": S = lastSaved; S.tallies = S.tallies || {}; show(); break;
+      case "start": startEvent(); break;
+      case "begin": S.idx = 0; S.phase = "question"; show(); break;
+      case "swap": {
+        const it = cur();
+        it.ask = it.ask === "men" ? "women" : "men";
+        remove(R("votes/" + S.idx));
+        show(); break;
+      }
+      case "reveal": S.tallies[S.idx] = liveTally(); S.phase = "reveal"; show(); break;
+      case "reopen": S.phase = "question"; show(); break;
+      case "next":
+        if (S.idx < S.deck.length - 1) { S.idx++; S.phase = "question"; }
+        else S.phase = "end";
+        show(); break;
+      case "timer": toggleTimer(); break;
+    }
+  });
+
+  goHome();
+}
+
+// ================================================================
+//  PLAYER (each guest's phone): the plain site address
+// ================================================================
+function startPlayer(R) {
+  document.body.classList.add("phone");
+  let pid = lsGet("btl-pid");
+  if (!pid) { pid = Math.random().toString(36).slice(2) + Date.now().toString(36); lsSet("btl-pid", pid); }
+  let g = lsGet("btl-g");
+  let st = null, loaded = false, myVote = null, unsubMine = null, mineKey = "";
+
+  function register(force) {
+    if (!g || !st) return;
+    if (force || lsGet("btl-joined") !== st.eventId) {
+      set(R("players/" + pid), g);
+      lsSet("btl-joined", st.eventId);
+    }
+  }
+
+  function watchMine() {
+    if (!st || st.phase === "lobby" || st.phase === "end") return;
+    const key = st.eventId + ":" + st.idx;
+    if (key === mineKey) return;
+    if (unsubMine) unsubMine();
+    mineKey = key; myVote = null;
+    unsubMine = onValue(R(`votes/${st.idx}/${pid}`), s => { const v = s.val(); myVote = v ? v.c : null; view(); });
+  }
+
+  onValue(R("state"), s => { st = s.val(); loaded = true; register(); watchMine(); view(); });
+
+  const label = x => (x === "men" ? "a man" : "a woman");
+  const foot = () => g ? `<div class="foot">Playing as ${label(g)} · <button data-act="change">change</button></div>` : "";
+
+  function view() {
+    if (!g) return render(`
+      <h1>Between the Lines</h1>
+      <p class="sub">A conversation game for couples</p>
+      <div class="card">
+        <p class="question" style="margin-top:0">Are you…</p>
+        <button class="gbtn men" data-act="pick" data-g="men">A man</button>
+        <button class="gbtn women" data-act="pick" data-g="women">A woman</button>
+        <p class="sub">Your answers are anonymous. Only the room’s totals are shown.</p>
+      </div>`, true);
+
+    if (!loaded) return render(`<div class="wait">Connecting…</div>`, true);
+
+    if (!st || st.phase === "lobby") return render(`
+      <h1>You’re in</h1>
+      <div class="card wait">Waiting for the host to start the first question.<br><span class="sub">Keep this page open.</span></div>${foot()}`, true);
+
+    if (st.phase === "end") {
+      const big = biggestOf(summaryRows(st));
+      return render(`
+        <h1>Thanks for playing</h1>
+        ${big.length ? `<div class="card"><h3>To carry on at home</h3><p class="sub">The questions where the room differed most:</p><ul class="talk">
+          ${big.map(r => `<li><strong>${esc(r.sc.title)}</strong><br><em>“${esc(r.sc.couplePrompt)}”</em></li>`).join("")}</ul></div>` : ""}${foot()}`, true);
+    }
+
+    const it = st.deck[st.idx], sc = SCENARIOS[it.sc];
+    const answering = it.ask === "both" || it.ask === g;
+    const task = answering
+      ? { badge: "Your honest answer", text: "Choose the answer that’s true for you." }
+      : { badge: `Predict the ${it.ask}`, text: `What will most of the ${it.ask} choose?` };
+
+    if (st.phase === "reveal") return render(`
+      <div class="sub">Question ${st.idx + 1} of ${st.deck.length}</div>
+      <h2>${esc(sc.title)}</h2>
+      <div class="card wait">Answers are closed. Look at the big screen.</div>
+      <div class="card"><h3>Then turn to your partner</h3><div class="prompt">“${esc(sc.couplePrompt)}”</div></div>${foot()}`, true);
+
+    render(`
+      <div class="sub">Question ${st.idx + 1} of ${st.deck.length}</div>
+      <div class="card">
+        <span class="badge">${task.badge}</span>
+        <h2>${esc(sc.title)}</h2>
+        ${sc.setup.map(l => `<p>${esc(l)}</p>`).join("")}
+        <p class="question">${esc(sc.question)}</p>
+        <p class="sub">${task.text}</p>
+        ${sc.options.map((o, i) => `<button class="choice${myVote === i ? " sel" : ""}" data-act="vote" data-i="${i}"><b>${L[i]}</b><span>${esc(o)}</span></button>`).join("")}
+        <div class="status">${myVote === null ? "" : "✓ Sent. You can change it until the host reveals the results."}</div>
+      </div>${foot()}`, true);
+  }
+
+  app.addEventListener("click", e => {
+    const b = e.target.closest("[data-act]");
+    if (!b) return;
+    switch (b.dataset.act) {
+      case "pick":
+        g = b.dataset.g; lsSet("btl-g", g);
+        register(true);
+        if (st && st.phase === "question" && myVote !== null) set(R(`votes/${st.idx}/${pid}`), { g, c: myVote });
+        view(); window.scrollTo(0, 0); break;
+      case "change": g = null; view(); break;
+      case "vote":
+        if (!st || st.phase !== "question") return;
+        myVote = +b.dataset.i;
+        set(R(`votes/${st.idx}/${pid}`), { g, c: myVote });
+        view(); break;
+    }
+  });
+
+  view();
+}
 </script>
 </body>
 </html>
