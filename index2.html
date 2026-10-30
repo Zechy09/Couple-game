@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Between the Lines: Couples Event Edition</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{--bg:#faf6f1;--card:#fff;--ink:#2b2420;--muted:#7a6e66;--accent:#b5523b;--men:#3d6b6b;--women:#b5523b;--line:#e8dfd6;--soft:#f3ebe3}
+*{box-sizing:border-box}
+html{font-size:clamp(16px,1.2vw + 8px,24px)}
+body{margin:0;font-family:Georgia,'Times New Roman',serif;background:var(--bg);color:var(--ink);line-height:1.5}
+main{max-width:1050px;margin:0 auto;padding:16px 22px 60px}
+.top{display:flex;justify-content:space-between;align-items:center;font-family:system-ui,sans-serif;font-size:.8rem;color:var(--muted);margin-bottom:8px;gap:8px;flex-wrap:wrap}
+.top button{background:none;border:1px solid var(--line);color:var(--muted);padding:6px 12px;font-size:.8rem;margin-left:6px}
+h1{font-size:2.2rem;margin:.2em 0}
+h2{font-size:1.8rem;margin:.2em 0 .5em}
+h3{font-family:system-ui,sans-serif;font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:1.2em 0 .5em}
+p{margin:.45em 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px 28px;margin:16px 0;box-shadow:0 2px 12px rgba(60,40,30,.05)}
+.sub{color:var(--muted);font-family:system-ui,sans-serif;font-size:.9rem}
+.badge{display:inline-block;font-family:system-ui,sans-serif;font-size:.85rem;font-weight:600;padding:6px 14px;border-radius:30px;background:var(--soft);color:var(--accent);margin-bottom:10px}
+.setup-line{font-size:1.2rem;margin:.3em 0}
+.question{font-weight:bold;font-size:1.35rem;margin-top:.9em}
+.opt{display:flex;gap:14px;background:var(--soft);border-radius:12px;padding:14px 18px;margin:10px 0;font-size:1.15rem}
+.opt b{color:var(--accent);min-width:1.2em}
+.instr{font-family:system-ui,sans-serif;background:#e3efee;color:var(--men);border-radius:10px;padding:12px 16px;margin-top:14px;font-size:.95rem}
+label.field{display:block;font-family:system-ui,sans-serif;font-size:.85rem;margin:14px 0 4px;color:var(--muted)}
+select{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;font-size:1rem;background:#fff;font-family:inherit}
+.check{display:flex;gap:10px;align-items:center;font-family:system-ui,sans-serif;font-size:.9rem;margin:14px 0}
+button{font-family:system-ui,sans-serif;font-size:1rem;cursor:pointer;border-radius:12px;border:none;padding:14px 22px;color:var(--ink)}
+.primary{background:var(--accent);color:#fff;width:100%;margin-top:16px;font-weight:600}
+.secondary{background:transparent;color:var(--accent);border:1px solid var(--accent);width:100%;margin-top:10px}
+.progress{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-bottom:6px}
+.progress div{height:100%;background:var(--accent)}
+.banner{font-size:1.3rem;font-weight:bold;padding:4px 0}
+.row{margin:16px 0}
+.row .ot{margin-bottom:6px}
+.row .ot b{color:var(--accent)}
+.bar{display:flex;align-items:center;gap:10px;margin:4px 0;font-family:system-ui,sans-serif;font-size:.8rem}
+.bar .who{width:12em;color:var(--muted)}
+.bar .track{flex:1;background:var(--soft);border-radius:6px;height:24px;overflow:hidden}
+.bar .fill{height:100%;border-radius:6px;transition:width .8s}
+.bar.men .fill{background:var(--men)}
+.bar.women .fill{background:var(--women)}
+.bar .pct{width:5.5em;text-align:right}
+@media(max-width:700px){.bar .who{width:7em}}
+.insight{border-left:4px solid var(--men);padding:2px 0 2px 16px;font-size:1.1rem}
+.prompt{background:#fbe9e3;border-radius:12px;padding:16px 20px;font-size:1.2rem;font-style:italic;margin:8px 0}
+.timer{display:flex;align-items:center;gap:16px;font-family:system-ui,sans-serif;margin-top:16px}
+.timer .clock{font-size:2rem;font-weight:700;min-width:4em}
+.timer .done{color:var(--accent)}
+.timer button{background:var(--soft)}
+.stat{display:flex;justify-content:space-between;gap:12px;font-family:system-ui,sans-serif;padding:10px 0;border-bottom:1px solid var(--line)}
+.stat.men span{color:var(--men)}
+.stat.women span{color:var(--women)}
+table{width:100%;border-collapse:collapse;font-family:system-ui,sans-serif;font-size:.85rem}
+th,td{text-align:left;padding:10px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:600}
+ul.talk{padding-left:18px}
+ul.talk li{margin:12px 0}
+.center{text-align:center}
+.qr{display:inline-block;padding:14px;background:#fff;border-radius:12px;border:1px solid var(--line)}
+.qr img,.qr canvas{display:block}
+.url{font-family:system-ui,sans-serif;font-size:1.1rem;font-weight:600;word-break:break-all;margin-top:10px}
+.joined{font-family:system-ui,sans-serif;font-size:1.4rem;font-weight:700;margin-top:12px}
+.overlay{position:fixed;inset:0;background:rgba(43,36,32,.75);display:flex;align-items:center;justify-content:center;z-index:10;padding:16px}
+/* phone (player) styles */
+.phone main{max-width:560px}
+.phone html{font-size:17px}
+.gbtn{display:block;width:100%;font-size:1.3rem;font-weight:700;padding:22px;margin:14px 0;color:#fff}
+.gbtn.men{background:var(--men)}
+.gbtn.women{background:var(--women)}
+.choice{display:flex;gap:14px;align-items:flex-start;width:100%;text-align:left;background:var(--soft);border:2px solid transparent;font-size:1.05rem;font-family:Georgia,serif;margin:10px 0;padding:16px}
+.choice b{color:var(--accent);font-family:system-ui,sans-serif}
+.choice.sel{border-color:var(--accent);background:#fbe9e3}
+.status{font-family:system-ui,sans-serif;font-size:.9rem;color:var(--men);margin-top:10px;min-height:1.5em}
+.foot{font-family:system-ui,sans-serif;font-size:.8rem;color:var(--muted);text-align:center;margin-top:24px}
+.foot button{background:none;color:var(--accent);padding:4px 6px;font-size:.8rem;text-decoration:underline}
+.wait{font-size:1.25rem;text-align:center;padding:20px 0}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, set, get, remove, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+// ============================================================
+//  PASTE YOUR FIREBASE CONFIG HERE (replace this whole object)
+// ============================================================
+const FIREBASE_CONFIG = {
+   apiKey: "AIzaSyCblCAkYwl5YrECyci-9MstHpzeJZSzFN4",
+  authDomain: "couple-game-c614e.firebaseapp.com",
+  databaseURL: "https://couple-game-c614e-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "couple-game-c614e",
+  storageBucket: "couple-game-c614e.firebasestorage.app",
+  messagingSenderId: "1022109100170",
+  appId: "1:1022109100170:web:98f0135ad5e1a336d2a573"
+};
+// ============================================================
+
+const L = ["A", "B", "C"];
+
+const SCENARIOS = [
+  { title: "The Late Reply",
+    setup: ["Your partner sends: “How’s your day going?”", "You reply four hours later.", "That evening they’re noticeably distant."],
+    question: "Which explanation is most likely?",
+    options: ["They’re annoyed you didn’t reply.", "They’re wondering how important they are to you.", "They’re stressed about something completely unrelated."],
+    insight: ["All three happen. The more useful question is: why did you choose the one you chose?",
+      "People who pick A tend to see issues as behaviour. People who pick B tend to see emotional meaning. People who pick C tend to avoid assuming motives."],
+    roomPrompt: "Who here has been the one waiting for the reply? What was actually going through your head?",
+    couplePrompt: "When I go quiet after something small, what do you think is usually happening for me?" },
+
+  { title: "The Unexpected Purchase",
+    setup: ["Your partner buys something expensive without discussing it.", "You’re annoyed."],
+    question: "What are you actually upset about?",
+    options: ["The money.", "Not being consulted.", "Feeling like you’re not operating as a team."],
+    insight: ["Most couples think they’re arguing about money.", "Many are really arguing about partnership: whether decisions are still being made together."],
+    roomPrompt: "Is there an amount where “we should have talked first” kicks in? Is that number different for the men and the women here?",
+    couplePrompt: "Which purchases do you think we should always talk about first, and why does that matter to you?" },
+
+  { title: "The Party",
+    setup: ["At a friend’s event, your partner spends most of the evening talking to other people."],
+    question: "Which feeling is most likely underneath the frustration?",
+    options: ["Embarrassment.", "Loneliness.", "Feeling taken for granted."],
+    insight: ["Frustration is usually the surface feeling. Underneath it is something more vulnerable.", "And it’s rarely the same thing for both people."],
+    roomPrompt: "Where’s the line between being sociable at a party and leaving your partner on their own?",
+    couplePrompt: "At a social event, what’s one small thing I could do that would make you feel connected to me?" },
+
+  { title: "The Compliment",
+    setup: ["You dress up for dinner.", "Your partner says: “You look nice.”", "That’s it."],
+    question: "Why might that land badly?",
+    options: ["The compliment wasn’t enthusiastic.", "It felt obligatory.", "There was already emotional distance before the compliment."],
+    insight: ["Counsellors hear this constantly. The compliment usually wasn’t the issue. The context was.",
+      "The same three words land very differently after a warm week than after a cold one."],
+    roomPrompt: "What makes a compliment feel genuine rather than polite?",
+    couplePrompt: "What does a compliment from me need to have in it for it to really land?" },
+
+  { title: "The Silent Car Ride",
+    setup: ["You’re driving home after a disagreement.", "Neither of you is talking."],
+    question: "What is the silence most likely to mean?",
+    options: ["“I’m still angry.”", "“I’m trying not to make it worse.”", "“I don’t think you’ll understand anyway.”"],
+    insight: ["Silence is one of the most misread signals in a relationship.",
+      "One person is often using it to calm things down, while the other experiences it as punishment or withdrawal."],
+    roomPrompt: "Men and women: when you go silent after an argument, what does your silence usually mean?",
+    couplePrompt: "When I go silent after an argument, what do you assume it means? Is that what it actually means?" },
+
+  { title: "The Phone at Dinner",
+    setup: ["You’re telling your partner about something that happened at work.", "Halfway through, they glance at their phone and reply to a message."],
+    question: "What bothers you most?",
+    options: ["It’s rude.", "It suggests what I’m saying isn’t interesting to them.", "It’s part of a pattern lately."],
+    insight: ["A single glance at a phone is small. What it represents, competing for attention, is not.",
+      "Many couples argue about phones when they’re really negotiating attention."],
+    roomPrompt: "Are phones at the table a problem in most relationships here, or just some?",
+    couplePrompt: "When do you most need my full attention, even if it’s only for five minutes?" },
+
+  { title: "“I’m Fine”",
+    setup: ["Something is clearly off. You ask what’s wrong.", "Your partner says: “I’m fine.”"],
+    question: "What do they most likely need?",
+    options: ["Space. They’ll talk when they’re ready.", "For me to ask again, gently.", "For me to work out what I did."],
+    insight: ["Couples often have opposite instincts here. One person shows care by giving space, the other by staying close.",
+      "Both are trying to help, and both can end up feeling rejected."],
+    roomPrompt: "When you say “I’m fine”, what does it usually mean?",
+    couplePrompt: "When I say I’m fine and I’m not, what would actually help in that moment?" },
+
+  { title: "The Weekend Plans",
+    setup: ["On Thursday, your partner mentions they’ve agreed to a friend’s plans for Saturday.", "You’d hoped to spend the day together, but you hadn’t said so."],
+    question: "What’s the most reasonable reaction?",
+    options: ["They should have checked first.", "I should have said what I wanted.", "It stings that they didn’t assume we’d spend it together."],
+    insight: ["Many hurts come from expectations that were never spoken.",
+      "The question isn’t who was wrong. It’s how each of you assumes free time gets decided."],
+    roomPrompt: "Whose job is it to speak up: the person with the expectation, or the person making the plans?",
+    couplePrompt: "How do you think weekends get decided in our relationship? Is that how you’d like it to work?" },
+
+  { title: "The Venting",
+    setup: ["You come home and vent about a frustrating day.", "Your partner immediately starts suggesting how to fix it."],
+    question: "How does that feel?",
+    options: ["Helpful. I want solutions.", "Dismissive. I wanted to be heard first.", "It depends entirely on what kind of day it was."],
+    insight: ["Fixing is often a form of love. So is listening.",
+      "The trouble starts when one person offers one while the other needs the other, and neither says which."],
+    roomPrompt: "Fixers and listeners: which are you, and how did your partner find out?",
+    couplePrompt: "Next time you vent, would it help if I asked: “Do you want help, or do you want me to listen?”" },
+
+  { title: "The Dishwasher",
+    setup: ["You load the dishwasher.", "Later, you notice your partner has quietly rearranged it."],
+    question: "What does this most likely mean?",
+    options: ["They just like it done a certain way.", "They don’t trust me to do things properly.", "They’re stressed and controlling what they can."],
+    insight: ["Small household moments carry big messages about competence and respect.",
+      "Very few couples fight about the dishwasher. Many fight about feeling criticised."],
+    roomPrompt: "What small household habit causes the most friction, and why does it matter more than it should?",
+    couplePrompt: "Is there something I do around the house that makes you feel judged without me saying a word?" },
+
+  { title: "The Story at Dinner",
+    setup: ["At dinner with friends, your partner tells a funny story about something embarrassing you did.", "Everyone laughs."],
+    question: "Why might it hurt, even if it was harmless?",
+    options: ["It wasn’t their story to tell.", "It felt like they were on the audience’s side, not mine.", "I was already feeling insecure that evening."],
+    insight: ["Teasing works when both people feel safe.",
+      "The same joke can be affectionate one night and wounding the next. The joke didn’t change. The safety did."],
+    roomPrompt: "Where’s the line between affectionate teasing and embarrassing someone?",
+    couplePrompt: "Are there stories about you that you’d rather I didn’t tell in front of others?" },
+
+  { title: "The Family Comment",
+    setup: ["At a family meal, one of your partner’s parents makes a pointed comment about you.", "Your partner says nothing."],
+    question: "What hurts most?",
+    options: ["The comment itself.", "That they didn’t defend me.", "That this keeps happening and nothing changes."],
+    insight: ["Loyalty conflicts are among the most painful in relationships.",
+      "The silent partner is often frozen between two people they love. The other partner experiences it as being left alone."],
+    roomPrompt: "Should a partner speak up in the moment, or deal with it privately afterwards?",
+    couplePrompt: "If that happened again, what would you want me to do: in the moment, or afterwards?" },
+
+  { title: "The Early Night",
+    setup: ["You suggest an evening together: food, a film, no phones.", "Your partner says they’re too tired."],
+    question: "What’s your first thought?",
+    options: ["Fair enough. They’re tired.", "I’m not much of a priority right now.", "We need to actually plan time together, not hope for it."],
+    insight: ["Tiredness is real, and so is the fear of slowly drifting apart.",
+      "The person declining is usually talking about their energy. The person asking often hears something about the relationship."],
+    roomPrompt: "How do busy couples protect time together without it becoming another chore?",
+    couplePrompt: "What does a really good evening together look like for you, and how could we protect time for it?" },
+
+  { title: "The Apology",
+    setup: ["After an argument, your partner says: “I’m sorry you felt that way.”"],
+    question: "Why might that not feel like an apology?",
+    options: ["It doesn’t admit doing anything wrong.", "It makes my feelings sound like the problem.", "It closes the conversation before anything is resolved."],
+    insight: ["Most people want three things from an apology: acknowledgement of what happened, understanding of the impact, and a sense that it matters.",
+      "Missing any one of them can make an apology feel empty."],
+    roomPrompt: "What makes an apology land for you?",
+    couplePrompt: "What does a real apology from me sound like to you?" }
+];
+
+// ---------- shared helpers ----------
+const app = document.getElementById("app");
+const IS_HOST = new URLSearchParams(location.search).has("host");
+const PLAYER_URL = location.origin + location.pathname;
+const CONFIGURED = !String(FIREBASE_CONFIG.databaseURL).includes("PASTE");
+
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const sum = a => a.reduce((x, y) => x + y, 0);
+const pct = (n, t) => (t ? Math.round((n / t) * 100) : 0);
+const blank = () => ({ men: [0, 0, 0], women: [0, 0, 0] });
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+function render(html, keepScroll) { app.innerHTML = html; if (!keepScroll) window.scrollTo(0, 0); }
+function tops(arr) { const m = Math.max(...arr); return m === 0 ? [] : arr.map((v, i) => (v === m ? i : -1)).filter(i => i >= 0); }
+const fmt = idx => (idx.length ? idx.map(i => L[i]).join(" / ") : "–");
+function normT(t) { t = t || {}; const fix = a => [0, 1, 2].map(i => (a && a[i]) || 0); return { men: fix(t.men), women: fix(t.women) }; }
+const tallyOf = (st, k) => normT(st.tallies && st.tallies[k]);
+
+function roles(ask) {
+  if (ask === "both") return { badge: "Everyone answers", men: "Men", women: "Women",
+    instr: "Men and women: each choose your own honest answer on your phone." };
+  if (ask === "men") return { badge: "Men answer · Women predict", men: "Men (answers)", women: "Women (predicting the men)",
+    instr: "Men: choose your honest answer. Women: predict what most of the men will choose." };
+  return { badge: "Women answer · Men predict", men: "Men (predicting the women)", women: "Women (answers)",
+    instr: "Women: choose your honest answer. Men: predict what most of the women will choose." };
+}
+
+function headline(it, t) {
+  const m = tops(t.men), w = tops(t.women);
+  if (!m.length && !w.length) return "No answers came in for this question.";
+  if (!m.length || !w.length) {
+    const who = m.length ? "men" : "women", other = m.length ? "women" : "men";
+    const verb = it.ask === "both" || it.ask === who ? "chose" : "predicted";
+    return `Only the ${who} answered. Most ${who} ${verb} ${fmt(m.length ? m : w)}. What would the ${other} have said?`;
+  }
+  const overlap = m.some(i => w.includes(i));
+  if (it.ask === "both") {
+    return overlap
+      ? `Men and women leaned the same way (${fmt(m.filter(i => w.includes(i)))}). Are the reasons the same too?`
+      : `Men leaned ${fmt(m)}. Women leaned ${fmt(w)}. Same moment, different reading.`;
+  }
+  const [ans, pred, A, P] = it.ask === "men" ? [m, w, "men", "women"] : [w, m, "women", "men"];
+  return overlap
+    ? `The ${P} read the ${A} well: most ${A} chose ${fmt(ans)}.`
+    : `Most ${A} chose ${fmt(ans)}, but the ${P} predicted ${fmt(pred)}. That gap is the conversation.`;
+}
+
+function gap(t) {
+  const tm = sum(t.men), tw = sum(t.women);
+  if (!tm || !tw) return 0;
+  return Math.round((t.men.reduce((s, v, i) => s + Math.abs(v / tm - t.women[i] / tw), 0) / 2) * 100);
+}
+
+function summaryRows(st) {
+  return st.deck.map((it, k) => {
+    const sc = SCENARIOS[it.sc], t = tallyOf(st, k), m = tops(t.men), w = tops(t.women), ov = m.some(i => w.includes(i));
+    let res;
+    if (!m.length || !w.length) res = "Not counted";
+    else if (it.ask === "both") res = ov ? "Same reading" : "Different readings";
+    else res = ov ? "Predicted correctly" : "Predicted differently";
+    return { sc, it, m, w, res, gap: gap(t) };
+  });
+}
+const biggestOf = rows => rows.filter(r => r.gap > 0).sort((a, b) => b.gap - a.gap).slice(0, 3);
+
+function drawQR(id, size) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (window.QRCode) new window.QRCode(el, { text: PLAYER_URL, width: size, height: size, colorDark: "#2b2420", colorLight: "#ffffff" });
+  else el.textContent = "QR code couldn’t load. Share the link below instead.";
+}
+
+// ---------- start ----------
+if (!CONFIGURED) {
+  render(`<h1>Between the Lines</h1><div class="card"><h3>Setup needed</h3>
+    <p>This game needs a free Firebase database so phones can send their answers to the host screen.</p>
+    <p>Open <code>index.html</code>, find <strong>PASTE YOUR FIREBASE CONFIG HERE</strong> near the top of the script, and replace it with your Firebase settings.</p></div>`);
+} else {
+  const db = getDatabase(initializeApp(FIREBASE_CONFIG));
+  const R = p => ref(db, "event" + (p ? "/" + p : ""));
+  if (IS_HOST) startHost(R); else startPlayer(R);
+}
+
+// ================================================================
+//  HOST (laptop on the projector): open the site with ?host at the end
+// ================================================================
+function startHost(R) {
+  document.title = "Host · Between the Lines";
+  let S = null, players = {}, votes = {}, unsubVotes = null, voteIdx = -1, lastSaved = null;
+  let timerId = null, timerLeft = 0;
+
+  const cur = () => S.deck[S.idx];
+  const scn = () => SCENARIOS[cur().sc];
+  const save = () => set(R("state"), S);
+
+  function joined() { const c = { men: 0, women: 0 }; Object.values(players).forEach(g => { if (g in c) c[g]++; }); return c; }
+  function liveTally() { const t = blank(); Object.values(votes).forEach(v => { if (v && t[v.g] && v.c >= 0 && v.c < 3) t[v.g][v.c]++; }); return t; }
+
+  onValue(R("players"), s => { players = s.val() || {}; updateLive(); });
+
+  function listenVotes(idx) {
+    if (voteIdx === idx && unsubVotes) return;
+    if (unsubVotes) unsubVotes();
+    votes = {}; voteIdx = idx;
+    unsubVotes = onValue(R("votes/" + idx), s => { votes = s.val() || {}; updateLive(); });
+  }
+
+  function joinedHTML() { const j = joined(); return `${j.men} ${j.men === 1 ? "man" : "men"} · ${j.women} ${j.women === 1 ? "woman" : "women"} joined`; }
+  function liveHTML() {
+    const j = joined(), t = liveTally(), r = roles(cur().ask);
+    return `<h3>Answers coming in</h3>
+      <div class="stat men"><span>${r.men}</span><strong>${sum(t.men)} of ${j.men}</strong></div>
+      <div class="stat women"><span>${r.women}</span><strong>${sum(t.women)} of ${j.women}</strong></div>`;
+  }
+  function updateLive() {
+    const jl = document.getElementById("joined"); if (jl) jl.textContent = joinedHTML();
+    const lv = document.getElementById("live"); if (lv && S && S.phase === "question") lv.innerHTML = liveHTML();
+  }
+
+  function topBar(showHome) {
+    return `<div class="top"><span>Between the Lines · Host screen</span><span>${S && S.phase !== "end" && showHome ? '<button data-act="qr">Join QR</button>' : ""}${showHome ? '<button data-act="home">Home</button>' : ""}<button data-act="fs">⛶ Full screen</button></span></div>`;
+  }
+  function progress() {
+    return `<div class="progress"><div style="width:${Math.round((S.idx / S.deck.length) * 100)}%"></div></div><div class="sub">Question ${S.idx + 1} of ${S.deck.length}</div>`;
+  }
+
+  function show() {
+    stopTimer();
+    save();
+    if (S.phase === "question") listenVotes(S.idx);
+    ({ lobby: viewLobby, question: viewQuestion, reveal: viewReveal, end: viewEnd })[S.phase]();
+  }
+
+  async function goHome() {
+    stopTimer();
+    render(`<p class="sub">Loading…</p>`);
+    let saved = null;
+    try { saved = (await get(R("state"))).val(); } catch (e) {}
+    lastSaved = saved;
+    viewSetup(saved);
+  }
+
+  function viewSetup(saved) {
+    const canResume = saved && saved.phase !== "end";
+    render(`${topBar(false)}
+      <h1>Between the Lines</h1>
+      <p class="sub">Couples Event Edition: everyone plays on their own phone</p>
+      ${canResume ? `<div class="card"><p>An event is in progress (${saved.phase === "lobby" ? "waiting for players" : `question ${saved.idx + 1} of ${saved.deck.length}`}).</p><button class="primary" data-act="resume">Resume event</button></div>` : ""}
+      <div class="card">
+        <h3>Set up the event</h3>
+        <label class="field" for="mode">Format</label>
+        <select id="mode">
+          <option value="alt" selected>Alternate: men answer and women predict, then swap</option>
+          <option value="both">Everyone answers every question</option>
+        </select>
+        <label class="field" for="len">Number of questions</label>
+        <select id="len">
+          <option value="7">7 questions (shorter event)</option>
+          <option value="10">10 questions</option>
+          <option value="14" selected>14 questions (full evening)</option>
+        </select>
+        <label class="field" for="tm">Discussion timer</label>
+        <select id="tm">
+          <option value="0">Off</option>
+          <option value="3">3 minutes</option>
+          <option value="5" selected>5 minutes</option>
+          <option value="8">8 minutes</option>
+          <option value="10">10 minutes</option>
+        </select>
+        <label class="check"><input type="checkbox" id="shuf"> Shuffle question order</label>
+        <button class="primary" data-act="start">${canResume ? "Start a new event instead" : "Open the event"}</button>
+      </div>
+      <div class="card">
+        <h3>How it works</h3>
+        <p>Keep this screen on the projector. Guests scan the QR code, choose man or woman, and answer each question on their phone.</p>
+        <p>You’ll see answers arrive live. Press “Reveal” when most people have answered, and the room’s results appear here.</p>
+      </div>`);
+  }
+
+  function startEvent() {
+    if (lastSaved && lastSaved.phase !== "end" && !confirm("Start a new event? The one in progress, and everyone who joined it, will be cleared.")) return;
+    const mode = document.getElementById("mode").value;
+    const n = +document.getElementById("len").value;
+    const timerMin = +document.getElementById("tm").value;
+    let order = SCENARIOS.map((_, i) => i);
+    if (document.getElementById("shuf").checked) order = shuffle(order);
+    order = order.slice(0, n);
+    S = {
+      eventId: Date.now().toString(36), mode, timerMin, idx: 0, phase: "lobby",
+      deck: order.map((sc, k) => ({ sc, ask: mode === "both" ? "both" : (k % 2 === 0 ? "men" : "women") })),
+      tallies: {}
+    };
+    if (unsubVotes) { unsubVotes(); unsubVotes = null; voteIdx = -1; }
+    players = {};
+    set(R(), { state: S }).then(() => show());
+  }
+
+  function viewLobby() {
+    render(`${topBar(true)}
+      <div class="card center">
+        <h1>Scan to join</h1>
+        <p class="sub">Point your phone camera at the code, then choose man or woman.</p>
+        <div class="qr" id="qr" style="margin-top:14px"></div>
+        <div class="url">${esc(PLAYER_URL)}</div>
+        <div class="joined" id="joined">${joinedHTML()}</div>
+      </div>
+      <button class="primary" data-act="begin">Everyone’s in: start question 1 →</button>`);
+    drawQR("qr", 300);
+  }
+
+  function viewQuestion() {
+    const it = cur(), sc = scn(), r = roles(it.ask);
+    render(`${topBar(true)}${progress()}
+      <div class="card">
+        <span class="badge">${r.badge}</span>
+        <h2>${esc(sc.title)}</h2>
+        ${sc.setup.map(l => `<p class="setup-line">${esc(l)}</p>`).join("")}
+        <p class="question">${esc(sc.question)}</p>
+        ${sc.options.map((o, i) => `<div class="opt"><b>${L[i]}</b><span>${esc(o)}</span></div>`).join("")}
+        <div class="instr">${r.instr}</div>
+      </div>
+      <div class="card" id="live">${liveHTML()}</div>
+      <button class="primary" data-act="reveal">Close answers and reveal the results</button>
+      ${it.ask !== "both" ? `<button class="secondary" data-act="swap">Swap: ${it.ask === "men" ? "women answer, men predict" : "men answer, women predict"} (clears answers so far)</button>` : ""}`);
+  }
+
+  function chart(it, t) {
+    const r = roles(it.ask), tm = sum(t.men), tw = sum(t.women);
+    return scn().options.map((o, i) => `<div class="row"><div class="ot"><b>${L[i]}</b> ${esc(o)}</div>
+      <div class="bar men"><span class="who">${r.men}</span><div class="track"><div class="fill" style="width:${pct(t.men[i], tm)}%"></div></div><span class="pct">${t.men[i]} · ${pct(t.men[i], tm)}%</span></div>
+      <div class="bar women"><span class="who">${r.women}</span><div class="track"><div class="fill" style="width:${pct(t.women[i], tw)}%"></div></div><span class="pct">${t.women[i]} · ${pct(t.women[i], tw)}%</span></div></div>`).join("");
+  }
+
+  function viewReveal() {
+    const it = cur(), sc = scn(), t = tallyOf(S, S.idx), last = S.idx === S.deck.length - 1;
+    render(`${topBar(true)}${progress()}
+      <div class="card">
+        <span class="badge">${roles(it.ask).badge}</span>
+        <h2>${esc(sc.title)}</h2>
+        <p class="banner">${esc(headline(it, t))}</p>
+        ${chart(it, t)}
+      </div>
+      <div class="card"><h3>Counsellor’s observation</h3><div class="insight">${sc.insight.map(x => `<p>${esc(x)}</p>`).join("")}</div></div>
+      <div class="card">
+        <h3>Room discussion</h3><div class="prompt">${esc(sc.roomPrompt)}</div>
+        <h3>Then turn to your partner</h3><div class="prompt">“${esc(sc.couplePrompt)}”</div>
+        ${S.timerMin ? `<div class="timer"><span class="clock" id="clock">${fmtTime(S.timerMin * 60)}</span><button data-act="timer" id="tbtn">Start discussion timer</button></div>` : ""}
+      </div>
+      <button class="primary" data-act="next">${last ? "Finish and see the summary" : "Next question →"}</button>
+      <button class="secondary" data-act="reopen">← Reopen answers for this question</button>`);
+    timerLeft = S.timerMin * 60;
+  }
+
+  function fmtTime(s) { return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; }
+  function stopTimer() { if (timerId) { clearInterval(timerId); timerId = null; } }
+  function toggleTimer() {
+    const b = document.getElementById("tbtn"), c = document.getElementById("clock");
+    if (timerId) { stopTimer(); b.textContent = "Resume"; return; }
+    if (timerLeft <= 0) { timerLeft = S.timerMin * 60; c.classList.remove("done"); c.textContent = fmtTime(timerLeft); }
+    b.textContent = "Pause";
+    timerId = setInterval(() => {
+      timerLeft--;
+      c.textContent = fmtTime(Math.max(timerLeft, 0));
+      if (timerLeft <= 0) { stopTimer(); c.textContent = "Time’s up"; c.classList.add("done"); b.textContent = "Restart"; }
+    }, 1000);
+  }
+
+  function viewEnd() {
+    const rows = summaryRows(S);
+    const counted = rows.filter(r => r.res !== "Not counted");
+    const womenPred = counted.filter(r => r.it.ask === "men");
+    const menPred = counted.filter(r => r.it.ask === "women");
+    const ok = arr => arr.filter(r => r.res === "Predicted correctly").length;
+    const biggest = biggestOf(rows);
+    render(`${topBar(false)}
+      <h1>The evening in summary</h1>
+      ${womenPred.length || menPred.length ? `<div class="card"><h3>Reading each other</h3>
+        ${womenPred.length ? `<div class="stat"><span>Women correctly predicted the men</span><strong>${ok(womenPred)} of ${womenPred.length}</strong></div>` : ""}
+        ${menPred.length ? `<div class="stat"><span>Men correctly predicted the women</span><strong>${ok(menPred)} of ${menPred.length}</strong></div>` : ""}
+        <p class="sub" style="margin-top:10px">A “correct” prediction means the predicting group’s most common answer matched the answering group’s most common answer.</p></div>` : ""}
+      <div class="card"><h3>Every question</h3>
+        <table><tr><th>Question</th><th>Format</th><th>Men</th><th>Women</th><th>Result</th></tr>
+        ${rows.map(r => `<tr><td>${esc(r.sc.title)}</td><td>${roles(r.it.ask).badge}</td><td>${fmt(r.m)}</td><td>${fmt(r.w)}</td><td>${r.res}</td></tr>`).join("")}
+        </table></div>
+      ${biggest.length ? `<div class="card"><h3>Biggest differences: worth continuing at home</h3><ul class="talk">
+        ${biggest.map(r => `<li><strong>${esc(r.sc.title)}</strong> (${r.gap}% apart)<br><em>“${esc(r.sc.couplePrompt)}”</em></li>`).join("")}</ul>
+        <p class="sub">These questions are also on everyone’s phone now.</p></div>` : ""}
+      <button class="primary" data-act="home">Back to the start</button>`);
+  }
+
+  function showQROverlay() {
+    const o = document.createElement("div");
+    o.className = "overlay";
+    o.innerHTML = `<div class="card center"><h2>Scan to join</h2><div class="qr" id="qr2"></div><div class="url">${esc(PLAYER_URL)}</div><p class="sub">Tap anywhere to close</p></div>`;
+    o.addEventListener("click", () => o.remove());
+    document.body.appendChild(o);
+    drawQR("qr2", 300);
+  }
+
+  app.addEventListener("click", e => {
+    const b = e.target.closest("[data-act]");
+    if (!b) return;
+    switch (b.dataset.act) {
+      case "fs":
+        if (document.fullscreenElement) document.exitFullscreen();
+        else if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
+        break;
+      case "qr": showQROverlay(); break;
+      case "home": goHome(); break;
+      case "resume": S = lastSaved; S.tallies = S.tallies || {}; show(); break;
+      case "start": startEvent(); break;
+      case "begin": S.idx = 0; S.phase = "question"; show(); break;
+      case "swap": {
+        const it = cur();
+        it.ask = it.ask === "men" ? "women" : "men";
+        remove(R("votes/" + S.idx));
+        show(); break;
+      }
+      case "reveal": S.tallies[S.idx] = liveTally(); S.phase = "reveal"; show(); break;
+      case "reopen": S.phase = "question"; show(); break;
+      case "next":
+        if (S.idx < S.deck.length - 1) { S.idx++; S.phase = "question"; }
+        else S.phase = "end";
+        show(); break;
+      case "timer": toggleTimer(); break;
+    }
+  });
+
+  goHome();
+}
+
+// ================================================================
+//  PLAYER (each guest's phone): the plain site address
+// ================================================================
+function startPlayer(R) {
+  document.body.classList.add("phone");
+  let pid = lsGet("btl-pid");
+  if (!pid) { pid = Math.random().toString(36).slice(2) + Date.now().toString(36); lsSet("btl-pid", pid); }
+  let g = lsGet("btl-g");
+  let st = null, loaded = false, myVote = null, unsubMine = null, mineKey = "";
+
+  function register(force) {
+    if (!g || !st) return;
+    if (force || lsGet("btl-joined") !== st.eventId) {
+      set(R("players/" + pid), g);
+      lsSet("btl-joined", st.eventId);
+    }
+  }
+
+  function watchMine() {
+    if (!st || st.phase === "lobby" || st.phase === "end") return;
+    const key = st.eventId + ":" + st.idx;
+    if (key === mineKey) return;
+    if (unsubMine) unsubMine();
+    mineKey = key; myVote = null;
+    unsubMine = onValue(R(`votes/${st.idx}/${pid}`), s => { const v = s.val(); myVote = v ? v.c : null; view(); });
+  }
+
+  onValue(R("state"), s => { st = s.val(); loaded = true; register(); watchMine(); view(); });
+
+  const label = x => (x === "men" ? "a man" : "a woman");
+  const foot = () => g ? `<div class="foot">Playing as ${label(g)} · <button data-act="change">change</button></div>` : "";
+
+  function view() {
+    if (!g) return render(`
+      <h1>Between the Lines</h1>
+      <p class="sub">A conversation game for couples</p>
+      <div class="card">
+        <p class="question" style="margin-top:0">Are you…</p>
+        <button class="gbtn men" data-act="pick" data-g="men">A man</button>
+        <button class="gbtn women" data-act="pick" data-g="women">A woman</button>
+        <p class="sub">Your answers are anonymous. Only the room’s totals are shown.</p>
+      </div>`, true);
+
+    if (!loaded) return render(`<div class="wait">Connecting…</div>`, true);
+
+    if (!st || st.phase === "lobby") return render(`
+      <h1>You’re in</h1>
+      <div class="card wait">Waiting for the host to start the first question.<br><span class="sub">Keep this page open.</span></div>${foot()}`, true);
+
+    if (st.phase === "end") {
+      const big = biggestOf(summaryRows(st));
+      return render(`
+        <h1>Thanks for playing</h1>
+        ${big.length ? `<div class="card"><h3>To carry on at home</h3><p class="sub">The questions where the room differed most:</p><ul class="talk">
+          ${big.map(r => `<li><strong>${esc(r.sc.title)}</strong><br><em>“${esc(r.sc.couplePrompt)}”</em></li>`).join("")}</ul></div>` : ""}${foot()}`, true);
+    }
+
+    const it = st.deck[st.idx], sc = SCENARIOS[it.sc];
+    const answering = it.ask === "both" || it.ask === g;
+    const task = answering
+      ? { badge: "Your honest answer", text: "Choose the answer that’s true for you." }
+      : { badge: `Predict the ${it.ask}`, text: `What will most of the ${it.ask} choose?` };
+
+    if (st.phase === "reveal") return render(`
+      <div class="sub">Question ${st.idx + 1} of ${st.deck.length}</div>
+      <h2>${esc(sc.title)}</h2>
+      <div class="card wait">Answers are closed. Look at the big screen.</div>
+      <div class="card"><h3>Then turn to your partner</h3><div class="prompt">“${esc(sc.couplePrompt)}”</div></div>${foot()}`, true);
+
+    render(`
+      <div class="sub">Question ${st.idx + 1} of ${st.deck.length}</div>
+      <div class="card">
+        <span class="badge">${task.badge}</span>
+        <h2>${esc(sc.title)}</h2>
+        ${sc.setup.map(l => `<p>${esc(l)}</p>`).join("")}
+        <p class="question">${esc(sc.question)}</p>
+        <p class="sub">${task.text}</p>
+        ${sc.options.map((o, i) => `<button class="choice${myVote === i ? " sel" : ""}" data-act="vote" data-i="${i}"><b>${L[i]}</b><span>${esc(o)}</span></button>`).join("")}
+        <div class="status">${myVote === null ? "" : "✓ Sent. You can change it until the host reveals the results."}</div>
+      </div>${foot()}`, true);
+  }
+
+  app.addEventListener("click", e => {
+    const b = e.target.closest("[data-act]");
+    if (!b) return;
+    switch (b.dataset.act) {
+      case "pick":
+        g = b.dataset.g; lsSet("btl-g", g);
+        register(true);
+        if (st && st.phase === "question" && myVote !== null) set(R(`votes/${st.idx}/${pid}`), { g, c: myVote });
+        view(); window.scrollTo(0, 0); break;
+      case "change": g = null; view(); break;
+      case "vote":
+        if (!st || st.phase !== "question") return;
+        myVote = +b.dataset.i;
+        set(R(`votes/${st.idx}/${pid}`), { g, c: myVote });
+        view(); break;
+    }
+  });
+
+  view();
+}
+</script>
+</body>
+</html>
